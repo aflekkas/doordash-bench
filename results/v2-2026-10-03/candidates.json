@@ -1,0 +1,49 @@
+[
+  {
+    "id": "M01",
+    "restaurant": "Bowls of Rice",
+    "items": [
+      "Crispy Garlic Sesame Fusion Chicken Rice Bowl"
+    ]
+  },
+  {
+    "id": "M02",
+    "restaurant": "Bowls of Rice",
+    "items": [
+      "Crispy Garlic Sesame Fusion Chicken Rice Bowl",
+      "Spicy Yuzu Tofu Rice Bowl",
+      "Crispy Vegetable Dumplings"
+    ]
+  },
+  {
+    "id": "M03",
+    "restaurant": "Dave's Hot Chicken",
+    "items": [
+      "Dave's #2: 2 Sliders w/ Fries"
+    ]
+  },
+  {
+    "id": "M04",
+    "restaurant": "Dave's Hot Chicken",
+    "items": [
+      "Dave's Hot Mozz 1 Piece",
+      "Single Tender"
+    ]
+  },
+  {
+    "id": "M05",
+    "restaurant": "Panera Bread",
+    "items": [
+      "Greek Salad",
+      "Tuna Salad Sandwich"
+    ]
+  },
+  {
+    "id": "M06",
+    "restaurant": "Taco Bell",
+    "items": [
+      "Steak Quesadilla",
+      "Grilled Cheese Burrito"
+    ]
+  }
+]

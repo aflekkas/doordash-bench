@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -82,13 +83,56 @@ def _numeric_usage(value: Any) -> dict | None:
         return None
     clean = {}
     for key, number in value.items():
-        if isinstance(number, (int, float)) and not isinstance(number, bool):
+        if _number(number) is not None:
             clean[key] = number
         elif isinstance(number, dict):
             nested = _numeric_usage(number)
             if nested:
                 clean[key] = nested
     return clean or None
+
+
+def _number(value: Any) -> int | float | None:
+    """Only finite, nonnegative numbers belong in usage or dollar totals."""
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        if math.isfinite(value) and value >= 0:
+            return value
+    return None
+
+
+def _tokens_total(cli: str, usage: dict | None) -> int | float | None:
+    """Normalize token totals without adding subsets/detail fields twice."""
+    if not usage:
+        return None
+    if cli == "opencode" and _number(usage.get("total")) is not None:
+        # OpenCode's total already includes reasoning and cached tokens.
+        return usage["total"]
+    keys = ("input", "output") if cli == "opencode" else ("input_tokens", "output_tokens")
+    if any(_number(usage.get(key)) is None for key in keys):
+        return None
+    total = sum(usage[key] for key in keys)
+    if cli == "claude":
+        # Anthropic input_tokens excludes cache reads and writes. Nested cache
+        # creation detail subdivides cache_creation_input_tokens, so ignore it.
+        total += sum(usage.get(key, 0) for key in
+                     ("cache_creation_input_tokens", "cache_read_input_tokens"))
+    elif cli == "opencode":
+        cache = usage.get("cache", {})
+        total += usage.get("reasoning", 0) + cache.get("read", 0) + cache.get("write", 0)
+    # Codex cached_input_tokens is a subset of input_tokens; reasoning tokens
+    # are part of output_tokens. Neither gets added again.
+    return total
+
+
+def _codex_cost(event: dict) -> int | float | None:
+    """Accept explicitly dollar-denominated fields only; never infer pricing."""
+    for source in (event, event.get("usage", {})):
+        if isinstance(source, dict):
+            for key in ("cost_usd", "total_cost_usd"):
+                value = _number(source.get(key))
+                if value is not None:
+                    return value
+    return None
 
 
 def _sum_usage(left: dict | None, right: dict | None) -> dict | None:
@@ -123,6 +167,9 @@ def _error_summary(message: str, code: int | None = None) -> str:
 def _parse_response(cli: str, stdout: str) -> dict:
     text_parts: list[str] = []
     usage = None
+    model_usage = None
+    token_totals: list[int | float | None] = []
+    costs: list[int | float | None] = []
     reported_model = None
     tools_used = False
     completed = False
@@ -153,7 +200,10 @@ def _parse_response(cli: str, stdout: str) -> dict:
                     text_parts.append(item.get("text", ""))
             if kind == "turn.completed":
                 completed = True
-                usage = _sum_usage(usage, _numeric_usage(event.get("usage")))
+                turn_usage = _numeric_usage(event.get("usage"))
+                usage = _sum_usage(usage, turn_usage)
+                token_totals.append(_tokens_total(cli, turn_usage))
+                costs.append(_codex_cost(event))
             if kind in {"turn.failed", "error"}:
                 error = _error_summary(json.dumps(event))
             reported_model = event.get("model", reported_model)
@@ -163,9 +213,12 @@ def _parse_response(cli: str, stdout: str) -> dict:
                 if isinstance(event.get("result"), str):
                     text_parts.append(event["result"])
                 usage = _numeric_usage(event.get("usage"))
-                model_usage = event.get("modelUsage", {})
-                if isinstance(model_usage, dict) and model_usage:
-                    reported_model = ",".join(model_usage)
+                token_totals.append(_tokens_total(cli, usage))
+                costs.append(_number(event.get("total_cost_usd")))
+                raw_model_usage = event.get("modelUsage", {})
+                model_usage = _numeric_usage(raw_model_usage)
+                if isinstance(raw_model_usage, dict) and raw_model_usage:
+                    reported_model = ",".join(raw_model_usage)
                 tools_used = bool(event.get("permission_denials"))
                 if not completed:
                     error = _error_summary(json.dumps(event))
@@ -181,7 +234,10 @@ def _parse_response(cli: str, stdout: str) -> dict:
             if kind in {"tool_use", "tool", "tool_call"} or part.get("type") == "tool":
                 tools_used = True
             if kind == "step_finish":
-                usage = _sum_usage(usage, _numeric_usage(part.get("tokens")))
+                step_usage = _numeric_usage(part.get("tokens"))
+                usage = _sum_usage(usage, step_usage)
+                token_totals.append(_tokens_total(cli, step_usage))
+                costs.append(_number(part.get("cost")))
                 if part.get("reason") in {"stop", "end-turn", "end_turn"}:
                     completed = True
                 elif part.get("reason") in {"tool-calls", "tool_calls"}:
@@ -196,7 +252,14 @@ def _parse_response(cli: str, stdout: str) -> dict:
     answer = "\n".join(part for part in text_parts if isinstance(part, str)).strip()
     if not error and (not completed or not answer):
         error = "CLI did not produce a completed final answer."
+    cost_usd = sum(costs) if costs and all(value is not None for value in costs) else None
+    cost_sources = {"claude": "claude_cli_estimate", "opencode": "opencode_cli_estimate",
+                    "codex": "codex_cli_reported"}
+    tokens_total = sum(token_totals) if token_totals and all(value is not None for value in token_totals) else None
     return {"text": answer if not error else "", "usage": usage,
+            "model_usage": model_usage, "tokens_total": tokens_total,
+            "cost_usd": cost_usd,
+            "cost_source": cost_sources.get(cli, "unreported") if cost_usd is not None else "unreported",
             "reported_model": reported_model, "error": error,
             "status": "invalid" if tools_used else ("error" if error else "ok")}
 
@@ -227,7 +290,7 @@ def _opencode_environment(binary: str, cwd: Path, env: dict[str, str]) -> dict[s
         "instructions": [], "plugin": [], "permission": "deny",
         "tools": {"*": False}, "autoupdate": False,
         "agent": {"benchmark": {"mode": "primary", "prompt": SYSTEM_PROMPT,
-                                "permission": "deny", "tools": {"*": False}, "steps": 1}},
+                                "permission": "deny", "tools": {"*": False}, "steps": 3}},
     }
     isolated = dict(env)
     for key in ("OPENCODE_CONFIG", "OPENCODE_CONFIG_CONTENT", "OPENCODE_CONFIG_DIR"):
@@ -383,6 +446,8 @@ def run_model(spec: ModelSpec, prompt: str, timeout: float = 120) -> dict:
     """One prediction, one requested model, no retries or silent fallbacks."""
     result = {"id": spec.id, "model": spec.model, "cli": spec.cli, "status": "error",
               "text": "", "latency_seconds": 0.0, "usage": None,
+              "model_usage": None, "tokens_total": None,
+              "cost_usd": None, "cost_source": "unreported",
               "reported_model": None, "error": None}
     binary = find_cli(spec.cli)
     if not binary:

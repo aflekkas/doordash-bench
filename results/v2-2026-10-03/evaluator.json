@@ -1,0 +1,55 @@
+{
+  "id": "opus",
+  "model": "claude-opus-5-5",
+  "cli": "claude",
+  "status": "ok",
+  "text": "{\"audits\":[{\"id\":\"A1\",\"exact_hits\":0,\"roast\":\"Zero for four; ordered the wrong menu entirely.\"},{\"id\":\"A2\",\"exact_hits\":0,\"roast\":\"Copied A1's homework, including every mistake.\"},{\"id\":\"A3\",\"exact_hits\":0,\"roast\":\"Third identical whiff; the herd ate nothing.\"},{\"id\":\"A4\",\"exact_hits\":0,\"roast\":\"Right meal M06, wrong hour.\"},{\"id\":\"A5\",\"exact_hits\":0,\"roast\":\"Bold M02 pick, still starving at zero.\"}]}",
+  "latency_seconds": 5.423,
+  "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 914,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 294,
+    "output_tokens_details": {
+      "thinking_tokens": 94
+    },
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 914,
+      "ephemeral_5m_input_tokens": 0
+    }
+  },
+  "model_usage": {
+    "claude-haiku-4-5-20251001": {
+      "inputTokens": 1180,
+      "outputTokens": 15,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0.001255,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000,
+      "thinkingTokens": 0
+    },
+    "claude-opus-5-5": {
+      "inputTokens": 2,
+      "outputTokens": 294,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 914,
+      "webSearchRequests": 0,
+      "costUSD": 0.0132,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 128000,
+      "thinkingTokens": 94
+    }
+  },
+  "tokens_total": 1210,
+  "cost_usd": 0.014454999999999999,
+  "cost_source": "claude_cli_estimate",
+  "reported_model": "claude-haiku-4-5-20251001,claude-opus-5-5",
+  "error": null,
+  "audit_verified": true
+}

@@ -11,3 +11,4 @@ jobs:
       - run: python -m pip install -r requirements.txt
       - run: python -m unittest discover -s tests -v
       - run: python chart.py results/2026-10-03/run.json --out .scratch/chart-check
+      - run: python chart_v2.py results/v2-2026-10-03/run.json --out .scratch/chart-v2-check

@@ -1,16 +1,26 @@
 # DoorDash Bench
 
-Frontier models. Six food orders. One guy who wants Dave's.
+Can AI guess my next DoorDash order? Apparently my stomach is a harder eval than expected.
 
-**State of the art at guessing my dinner.** `n=1`, `p=vibes`, peer review by my stomach.
+![Score versus cost](results/v2-2026-10-03/chart.png)
 
-![DoorDash Bench results](results/2026-10-03/chart.png)
+**Sonnet leads the tested models at 54.1/100. Uniform probabilities score 58.3.** All five models missed all four exact picks. The score grades their probabilities, so being confidently wrong hurts more than being uncertain. This is one person's four food decisions, not a general model intelligence ranking.
 
-This runs your installed **Codex, Claude Code, and OpenCode CLIs**, using their existing login/configuration. No model SDK, direct API calls, or API keys in this repo. You can start it from T3 Code or a regular terminal.
+| Model | Forecast score /100 | Estimated cost / prediction | Exact picks |
+| --- | ---: | ---: | ---: |
+| Claude Sonnet 5.5 | 54.1 | $0.00777 | 0/4 |
+| Claude Opus 5.5 | 53.6 | $0.01398 | 0/4 |
+| GPT Astra | 51.5 | $0.05334 | 0/4 |
+| GPT Sol | 51.0 | $0.00926 | 0/4 |
+| Meta Muse Spark | 49.3 | $0.000128 | 0/4 |
+| Uniform probabilities | 58.3 | $0 model inference | — |
+| Order frequency | 50.2 | $0 model inference | 0/4 |
+
+Dollar amounts are **API-equivalent estimates, not subscription charges or invoices**. Claude/OpenCode supply their CLI estimates. Codex's measured input/cache/output tokens are priced offline at dated, verified [official OpenAI rates](https://developers.openai.com/api/docs/pricing). The chart includes prediction sessions' CLI context, output and observed cache usage. Shared setup/evaluator calls are reported separately. Rates and sources are saved with the run; no dollars are invented for missing measurements.
 
 ## Run it
 
-Requires Python 3.10+, authenticated model CLIs, and the authenticated DoorDash **`dd-cli`** if you want to fetch your own history. The included history fixture lets you try the harness without DoorDash access. This repo doesn't install or provide `dd-cli`; its adapter was tested with version 0.2.5. `/bin/dd` is a different program.
+Requires Python 3.10+, authenticated **Codex, Claude Code, and OpenCode CLIs**, and optionally the authenticated DoorDash **`dd-cli`**. No model SDK or direct model API calls. The harness uses existing CLI login/configuration. Run it from T3 Code or a regular terminal.
 
 ```sh
 git clone https://github.com/aflekkas/doordash-bench.git
@@ -18,26 +28,28 @@ cd doordash-bench
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
-mkdir -p local
 
-# Fetch your actual orders with the read-only DoorDash CLI.
-python doordash_adapter.py --output local/history.json --max-orders 10 --days 90
-
-# Write today's actual craving BEFORE running. Keep it out of the history.
-cp examples/target.json local/target.json
-# Edit local/target.json and review local/history.json.
-python benchmark.py --history local/history.json --target local/target.json --out local/my-run
+# Use the reviewed meal-name-only fixture.
+python suite.py --history examples/history.json --target examples/target.json --out local/my-run
 ```
 
-To reproduce the published task using its six meal-name-only orders:
+To use your own DoorDash history:
 
 ```sh
-python benchmark.py --history examples/history.json --target examples/target.json --out local/example-run
+mkdir -p local
+python doordash_adapter.py --output local/history.json --max-orders 10 --days 90
+cp examples/target.json local/target.json
+# Edit local/target.json to today's craving BEFORE running.
+python suite.py --history local/history.json --target local/target.json --out local/personal-run
 ```
 
-Have only Codex installed? Use `--models sol,astra --setup-model sol --judge-model sol`. Each run needs a fresh output directory. Model IDs live in `cli_runners.py`; change them to models your CLI account actually supports. No silent model substitution.
+The current craving must match one of your historical meals. This version forecasts choices from a known menu; it doesn't discover new restaurants. At least four orders and two distinct meals are required. Each run needs a fresh output directory.
 
-| ID | CLI | Requested model |
+Only Codex installed? Add `--models sol,astra --setup-model sol --judge-model sol`. Update dated rates with `--prices your-rates.json`. Missing rates/costs remain unknown; the chart falls back to a clearly labeled tokens-per-task proxy when dollars aren't available for every model.
+
+`dd-cli` isn't installed by this repo. The read-only adapter was verified with `dd-cli` 0.2.5. Use `dd-cli login` to authenticate your installed CLI. `/bin/dd` is a different program.
+
+| ID | Installed CLI | Requested model |
 | --- | --- | --- |
 | `muse` | OpenCode | `meta/muse-spark-1.3-contributor` |
 | `opus` | Claude Code | `claude-opus-5-5` |
@@ -45,57 +57,56 @@ Have only Codex installed? Use `--models sol,astra --setup-model sol --judge-mod
 | `sol` | Codex | `gpt-6.1-sol` |
 | `astra` | Codex | `gpt-6-astra` |
 
-That's the five-model roster selected for this run, not a claim to cover every model ever released. Muse Spark is one model here.
+No silent model fallback. The chart names the requested models; CLI-reported model metadata remains in the raw run records.
 
-## What happens
+## Four tasks, real data
 
-1. **History:** `dd-cli --json-output order history` supplies the evidence. The adapter exports only restaurant names, item names, and relative sequence, newest first. It has no cart or checkout code.
-2. **Setup model:** Sonnet summarizes the evidence and explains a fixed rubric. Its summary and the original meal names become `brief.md`. It never receives today's answer. The harness freezes the rubric, target hash, and prompt hash before contestants run.
-3. **Contestants:** five fresh CLI sessions get the identical prompt and return one restaurant, meal, and short reason. Empty working directories, suppressed personal instructions, tools disabled, low/minimal effort. No browsing, menu search, or ordering.
-4. **Evaluator model:** Opus sees shuffled anonymous predictions, the hidden answer, and the rubric in one batch. It classifies meal similarity and writes a short roast. Python computes points from those classifications; exact restaurant matching is deterministic.
-5. **Chart:** actual scores become a hand-drawn PNG. `run.json` retains the answers, judge classifications, usage, wall times, and hashes. Failed or invalid runs have **no score**, not zero.
+The published fixture contains six actual orders, newest first, with only restaurant/item names and relative sequence.
 
-Default budget: **one setup call + five predictions + one evaluator call**. Two contestants run concurrently. Replies are short; no retries happen automatically. Claude has a $0.50 per-session cap; Codex/OpenCode expose different limits, so short replies and timeouts aren't a universal spending cap. These are authenticated model CLIs, and their normal billing or subscription limits still apply.
+Three historical tasks hide each of the three newest orders. A model sees **only older orders** and forecasts the next meal. The fourth task uses all six past orders to forecast today's craving: **Dave's #2: 2 Sliders w/ Fries**, confirmed before the run.
 
-## Scoring
+Every model receives the same six meal choices, built from the historical menu. Choice IDs come from a canonical alphabetical sort, not recency. Their display order is shuffled identically for each model. Each task uses a **fresh isolated CLI session**; batching overlapping histories would reveal earlier hidden answers through later contexts.
 
-One top-1 guess. **Closeness points out of 100, not an accuracy percentage.** The model judge classifies semantic item/category matches; it doesn't choose a winner.
+A setup model writes [the brief](results/v2-2026-10-03/brief.md) from the fixed evaluation specification. It never receives history or answers. Models return only a probability distribution over meal IDs. A blinded Opus evaluator independently audits exact-pick counts; Python calculates the probability scores. Tool use invalidates a prediction. No cart or checkout code is exposed.
 
-| Guess, when an exact meal is specified | Points |
-| --- | ---: |
-| Correct restaurant + exact meal | 100 |
-| Correct restaurant + same main food/form, different sides or quantity | 85 |
-| Correct restaurant + different meal | 70 |
-| Different restaurant, Nashville/spicy fried chicken | 45 |
-| Other chicken meal | 30 |
-| Rice/protein bowl | 15 |
-| Other meal | 0 |
+Default budget: **20 short predictions + one setup + one evaluator**, no automatic retries. Low/minimal reasoning, two concurrent sessions, no tools. Claude has a $0.50 per-session cap; CLI timeout and reply instructions aren't a universal spending cap. Normal CLI billing/subscription limits apply.
 
-With no target items, score only the restaurant/category: 100 / 60 / 40 / 20 / 0. A rice bowl containing chicken belongs to the bowl category; the first published evaluator also classified all bowl guesses this way. Exact restaurant comparison ignores punctuation/case and accepts aliases you explicitly list in the target.
+## Score
 
-Two cheap baselines use the newest order and the most frequent restaurant. Frequency ties break by recency, and that restaurant's most recent meal is chosen. Today's newest restaurant and frequency winner happen to be the same.
+We use multiclass Brier loss, converted to a higher-is-better score:
 
-## The actual run
+```text
+loss = sum((predicted_probability - actual_outcome)^2) over meal choices
+score = 100 × (1 - loss / 2), averaged over all four tasks
+```
 
-Ground truth, confirmed before predictions: **Dave's Hot Chicken — Dave's #2: 2 Sliders w/ Fries**. Six actual historical orders, four restaurants, two repeats each for Dave's and Bowls of Rice. No synthetic personal history.
+100 means complete confidence in the correct meal; 0 means complete confidence in a wrong meal. A uniform distribution over six choices scores 58.3. This is **not an accuracy percentage**. The definition and 0–2 multiclass loss range follow the [scikit-learn Brier documentation](https://scikit-learn.org/stable/modules/model_evaluation.html#brier-score-loss); no scikit-learn dependency is needed.
 
-**Muse, Opus, Sonnet, Sol, and Astra all chose Bowls of Rice and scored 15/100**, tying both counting baselines. [Full results, reply token counts, and the documented Muse infrastructure retry](results/2026-10-03/README.md).
+We also report exact top-1 picks, with ties broken by smallest meal ID. Uniform top-1 tie-breaking is arbitrary, so its exact-pick count isn't presented as random-sampling accuracy. Every model needs all four valid tasks to receive an aggregate score; failures cannot raise a score by dropping a hard task.
 
-See [the frozen brief](results/2026-10-03/brief.md), [predictions and scores](results/2026-10-03/run.json), [rubric](results/2026-10-03/rubric.json), and [manifest](results/2026-10-03/manifest.json). The published run has one prediction per successful model. CLI versions/system prompts differ; latency includes CLI startup and OpenCode configuration discovery. Usage retains provider-specific fields, including cached tokens, rather than pretending they are directly comparable. Missing counts are `null`.
+Baselines are uniform probabilities, observed meal counts with fixed 0.5 smoothing, and repeating the latest meal. The score does not reward long explanations or invent subjective partial-credit categories.
 
-This is one person's one craving, with a model-written summary and model-judged partial credit. No confidence intervals, general intelligence ranking, or statistically meaningful SOTA claim. The original order list stays in the brief so the setup model can't quietly erase inconvenient clues.
+## Audit and share
 
-Personal data and fresh runs default to gitignored `local/` or `.scratch/`. Only the reviewed meal-name fixture and published run are committed. Don't commit raw DoorDash responses or CLI configuration files.
+[Full v2 results](results/v2-2026-10-03/run.json) include every probability, cost/usage record, score, setup/evaluator response, and answer/prompt commitments. Those hashes were saved before predictions; they are local commitments, not public preregistration. Costs and reference pricing were added as an offline analysis after the measurements. CLI startup, cache warmth, and system prompts differ; this is a CLI harness comparison.
 
-## Share it
+An early development attempt encoded chronology in menu IDs. Review caught it; that attempt was excluded and all five models ran once on the corrected protocol. The run manifest documents it. We didn't select the best score across runs. The original one-craving experiment remains available in [v1](results/2026-10-03/README.md): every model picked rice and scored 15/100 under its different rubric. V1 and v2 scores aren't comparable.
 
-The full-size image is [chart.png](results/2026-10-03/chart.png). Regenerate it without spending model tokens:
+Download [the PNG](results/v2-2026-10-03/chart.png) or [vector SVG](results/v2-2026-10-03/chart.svg). Regenerate without spending model tokens:
 
 ```sh
-python chart.py results/2026-10-03/run.json
+python chart_v2.py results/v2-2026-10-03/run.json
 python -m unittest discover -s tests -v
 ```
 
-Caption: **“I benchmarked five frontier models on the only eval that matters: what I want for dinner. Every single one tied with counting my orders. They picked rice. I wanted Dave's. AGI is cancelled.”**
+Tweet:
 
-MIT for the code. Caveat font, copyright The Caveat Project Authors, bundled under the SIL Open Font License in `assets/OFL-Caveat.txt`. Independent joke project; not affiliated with DoorDash.
+> new SOTA eval: guessing my DoorDash order.
+>
+> Sonnet beat the other models. A uniform distribution beat Sonnet.
+>
+> we have achieved artificial general indecision.
+
+Fresh runs and personal exports default to gitignored `local/` and `.scratch/`. Only reviewed meal names and public results are committed. No raw DoorDash account data or credentials are published.
+
+MIT code. Inter and Caveat fonts retain their bundled SIL Open Font Licenses. Independent joke project; not affiliated with DoorDash.

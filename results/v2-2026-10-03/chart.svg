@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+<rect width="100%" height="100%" fill="white"/>
+<text x="80.00" y="65.96" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="28" font-weight="650">DoorDash Bench</text>
+<text x="80.00" y="133.90" fill="#182230" font-family="Inter,Arial,sans-serif" font-size="45" font-weight="650">Can AI guess my next DoorDash order?</text>
+<text x="80.00" y="181.22" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="21" font-weight="400">3 historical orders + today’s craving · 4 independent tasks/model</text>
+<text x="80.00" y="254.68" fill="#182230" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="400">Up = better forecast · left = cheaper</text>
+<text x="80.00" y="310.40" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="400">Probability score / 100</text>
+<text x="1159.00" y="307.94" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="17" font-weight="400">Y-axis zoomed: 40–65 (full scale: 0–100)</text>
+<line x1="145" y1="768.0" x2="1490" y2="768.0" stroke="#EAECF0" stroke-width="1"/>
+<text x="99.50" y="774.40" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="400">40</text>
+<line x1="145" y1="681.0" x2="1490" y2="681.0" stroke="#EAECF0" stroke-width="1"/>
+<text x="100.00" y="687.40" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="400">45</text>
+<line x1="145" y1="594.0" x2="1490" y2="594.0" stroke="#EAECF0" stroke-width="1"/>
+<text x="100.50" y="600.40" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="400">50</text>
+<line x1="145" y1="507.0" x2="1490" y2="507.0" stroke="#EAECF0" stroke-width="1"/>
+<text x="101.00" y="513.40" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="400">55</text>
+<line x1="145" y1="420.0" x2="1490" y2="420.0" stroke="#EAECF0" stroke-width="1"/>
+<text x="100.50" y="426.40" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="400">60</text>
+<line x1="145" y1="333.0" x2="1490" y2="333.0" stroke="#EAECF0" stroke-width="1"/>
+<text x="101.00" y="339.40" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="400">65</text>
+<text x="132.50" y="804.40" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="400">$0</text>
+<text x="449.75" y="804.40" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="400">$0.015</text>
+<text x="783.75" y="804.40" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="400">$0.030</text>
+<text x="1119.75" y="804.40" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="400">$0.045</text>
+<text x="1456.25" y="804.40" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="400">$0.060</text>
+<text x="604.50" y="852.50" fill="#182230" font-family="Inter,Arial,sans-serif" font-size="25" font-weight="400">Estimated cost per prediction (USD)</text>
+<line x1="145" y1="449.00000000000006" x2="1490" y2="449.00000000000006" stroke="#98A2B3" stroke-width="2" stroke-dasharray="6 6"/>
+<text x="1197.50" y="432.86" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="23" font-weight="400">Uniform probabilities: 58.3</text>
+<line x1="319.18870833333335" y1="523.53" x2="337.18870833333335" y2="503.53" stroke="#2563EB" stroke-width="1"/>
+<text x="337.19" y="496.03" fill="#2563EB" font-family="Inter,Arial,sans-serif" font-size="25" font-weight="650">Sonnet 5.5 · 54.1</text>
+<line x1="458.4914791666667" y1="530.664" x2="476.4914791666667" y2="550.664" stroke="#7C3AED" stroke-width="1"/>
+<text x="476.49" y="571.16" fill="#7C3AED" font-family="Inter,Arial,sans-serif" font-size="25" font-weight="650">Opus 5.5 · 53.6</text>
+<line x1="1340.6265416666668" y1="567.7695000000001" x2="1340.6265416666668" y2="587.7695000000001" stroke="#E07816" stroke-width="1"/>
+<text x="1287.50" y="608.27" fill="#E07816" font-family="Inter,Arial,sans-serif" font-size="25" font-weight="650">GPT Astra · 51.5</text>
+<line x1="352.513325" y1="576.426" x2="370.513325" y2="596.426" stroke="#0D9488" stroke-width="1"/>
+<text x="370.51" y="616.93" fill="#0D9488" font-family="Inter,Arial,sans-serif" font-size="25" font-weight="650">GPT Sol · 51.0</text>
+<line x1="147.86709166666668" y1="605.6144999999999" x2="155" y2="663.6144999999999" stroke="#D7476A" stroke-width="1"/>
+<text x="155.00" y="684.11" fill="#D7476A" font-family="Inter,Arial,sans-serif" font-size="25" font-weight="650">Meta Muse Spark · 49.3</text>
+<circle cx="319.18870833333335" cy="523.53" r="9" fill="#2563EB" stroke="white" stroke-width="1.5"/>
+<circle cx="458.4914791666667" cy="530.664" r="9" fill="#7C3AED" stroke="white" stroke-width="1.5"/>
+<circle cx="1340.6265416666668" cy="567.7695000000001" r="9" fill="#E07816" stroke="white" stroke-width="1.5"/>
+<circle cx="352.513325" cy="576.426" r="9" fill="#0D9488" stroke="white" stroke-width="1.5"/>
+<circle cx="147.86709166666668" cy="605.6144999999999" r="9" fill="#D7476A" stroke="white" stroke-width="1.5"/>
+<text x="80.00" y="941.40" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="400">Probability scores, not accuracy. All 5 models: 0/4 exact picks.</text>
+<text x="80.00" y="977.76" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="18" font-weight="400">API-equivalent estimates, not subscription charges. n = 1 person.</text>
+<text x="1210.00" y="976.94" fill="#667085" font-family="Inter,Arial,sans-serif" font-size="17" font-weight="400">github.com/aflekkas/doordash-bench</text>
+</svg>

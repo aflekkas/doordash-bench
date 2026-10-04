@@ -1,0 +1,1750 @@
+{
+  "title": "DoorDash Bench",
+  "version": "doordash-bench-v2",
+  "task_count": 4,
+  "manifest": {
+    "started_at": "2026-10-04T00:17:48.783363+00:00",
+    "spec": {
+      "version": "doordash-bench-v2",
+      "historical_tasks": 3,
+      "current_craving_tasks": 1,
+      "score": "100 * (1 - multiclass Brier loss / 2), averaged across all four tasks",
+      "brier_loss": "sum((probability - one_hot_truth) ** 2) across the fixed meal choices",
+      "higher_is_better": true,
+      "top1_tie_break": "lexicographically smallest meal ID",
+      "task_isolation": "one fresh CLI session per task; no shared history/context or session resume",
+      "menu_scope": "static meal choices from the history; known-menu prediction, not discovery of unseen restaurants",
+      "normalization": "reject probability sums more than 0.005 from 1; otherwise normalize rounding error",
+      "cost_basis": "CLI estimates are not invoices; token counts include reported input/cache/reasoning/output"
+    },
+    "spec_sha256": "8af31a6a6ae70182e3a7e8abd893c0dfee416f690fadc9e24ddf99edcb1c31d0",
+    "history_sha256": "8a6afd92f75bf080ba2a60fbcff904a3a634984c65ba9d8cd8b693e9a280128c",
+    "answer_commitment_sha256": "f5e6d0a7f50583c80d757bbd721c1105440c60ee85620347e3f033752400e56b",
+    "candidate_sha256": "35d453afb5568c92b37813d583645d37d062d27a9bab9752092fa8df2fcb5b68",
+    "models": [
+      {
+        "id": "muse",
+        "label": "Meta Muse Spark",
+        "cli": "opencode",
+        "model": "meta/muse-spark-1.3-contributor"
+      },
+      {
+        "id": "opus",
+        "label": "Claude Opus 5.5",
+        "cli": "claude",
+        "model": "claude-opus-5-5"
+      },
+      {
+        "id": "sonnet",
+        "label": "Claude Sonnet 5.5",
+        "cli": "claude",
+        "model": "claude-sonnet-5-5"
+      },
+      {
+        "id": "sol",
+        "label": "GPT Sol",
+        "cli": "codex",
+        "model": "gpt-6.1-sol"
+      },
+      {
+        "id": "astra",
+        "label": "GPT Astra",
+        "cli": "codex",
+        "model": "gpt-6-astra"
+      }
+    ],
+    "task_count": 4,
+    "setup_model": "sonnet",
+    "judge_model": "opus",
+    "trials_per_task": 1,
+    "prediction_calls_planned": 20,
+    "prompt_sha256": {
+      "H1": "e8afebf65588a3c9dc29be2ec550e91b10e02bc7b44c97fdad7200ef8a3880bd",
+      "H2": "4a9231e9a27d37b1cc5b98b951bbc50730afbf1ce6202a990f90ac41cae43ebc",
+      "H3": "0cfdffdb412e76d685865168306987b9fc2ae3ca2a8b6ea91b5ea14b9c5a2ae9",
+      "NOW": "206cb79a533251f33a080a3ec11389ab8da90a2a8f4467352100b2707f437c0c"
+    },
+    "cost_analysis": {
+      "reference_prices": {
+        "verified_on": "2026-10-03",
+        "currency": "USD",
+        "basis": "Standard short-context API-equivalent pricing, not subscription billing",
+        "source": "https://developers.openai.com/api/docs/pricing",
+        "models": {
+          "gpt-6.1-sol": {
+            "input_per_million": 2.0,
+            "cached_input_per_million": 0.1,
+            "cache_write_per_million": 2.5,
+            "output_per_million": 10.0
+          },
+          "gpt-6-astra": {
+            "input_per_million": 10.0,
+            "cached_input_per_million": 1.0,
+            "cache_write_per_million": 12.5,
+            "output_per_million": 50.0
+          }
+        }
+      },
+      "reference_prices_sha256": "4d073be1a5b35fb099b16921fa7048e9d26783f634a7425fcf2d0e0dd12bcc83",
+      "recorded_after_predictions": true,
+      "basis": "Estimated API-equivalent prediction cost. Includes CLI context/cache/output; excludes shared setup/evaluator and subscription fees."
+    },
+    "excluded_development_attempt": {
+      "reason": "Menu IDs encoded recency; canonical alphabetical IDs fixed before accepting the leaderboard. First attempt retained privately under .scratch/excluded-v2.",
+      "prediction_calls": 20,
+      "accepted_for_scoring": false
+    }
+  },
+  "candidates": [
+    {
+      "id": "M01",
+      "restaurant": "Bowls of Rice",
+      "items": [
+        "Crispy Garlic Sesame Fusion Chicken Rice Bowl"
+      ]
+    },
+    {
+      "id": "M02",
+      "restaurant": "Bowls of Rice",
+      "items": [
+        "Crispy Garlic Sesame Fusion Chicken Rice Bowl",
+        "Spicy Yuzu Tofu Rice Bowl",
+        "Crispy Vegetable Dumplings"
+      ]
+    },
+    {
+      "id": "M03",
+      "restaurant": "Dave's Hot Chicken",
+      "items": [
+        "Dave's #2: 2 Sliders w/ Fries"
+      ]
+    },
+    {
+      "id": "M04",
+      "restaurant": "Dave's Hot Chicken",
+      "items": [
+        "Dave's Hot Mozz 1 Piece",
+        "Single Tender"
+      ]
+    },
+    {
+      "id": "M05",
+      "restaurant": "Panera Bread",
+      "items": [
+        "Greek Salad",
+        "Tuna Salad Sandwich"
+      ]
+    },
+    {
+      "id": "M06",
+      "restaurant": "Taco Bell",
+      "items": [
+        "Steak Quesadilla",
+        "Grilled Cheese Burrito"
+      ]
+    }
+  ],
+  "tasks_revealed": [
+    {
+      "id": "H1",
+      "kind": "historical_next_order",
+      "history": [
+        {
+          "sequence": 1,
+          "restaurant": "Panera Bread",
+          "items": [
+            "Greek Salad",
+            "Tuna Salad Sandwich"
+          ]
+        },
+        {
+          "sequence": 2,
+          "restaurant": "Bowls of Rice",
+          "items": [
+            "Crispy Garlic Sesame Fusion Chicken Rice Bowl",
+            "Spicy Yuzu Tofu Rice Bowl",
+            "Crispy Vegetable Dumplings"
+          ]
+        },
+        {
+          "sequence": 3,
+          "restaurant": "Dave's Hot Chicken",
+          "items": [
+            "Dave's Hot Mozz 1 Piece",
+            "Single Tender"
+          ]
+        }
+      ],
+      "answer": "M03"
+    },
+    {
+      "id": "H2",
+      "kind": "historical_next_order",
+      "history": [
+        {
+          "sequence": 1,
+          "restaurant": "Dave's Hot Chicken",
+          "items": [
+            "Dave's #2: 2 Sliders w/ Fries"
+          ]
+        },
+        {
+          "sequence": 2,
+          "restaurant": "Panera Bread",
+          "items": [
+            "Greek Salad",
+            "Tuna Salad Sandwich"
+          ]
+        },
+        {
+          "sequence": 3,
+          "restaurant": "Bowls of Rice",
+          "items": [
+            "Crispy Garlic Sesame Fusion Chicken Rice Bowl",
+            "Spicy Yuzu Tofu Rice Bowl",
+            "Crispy Vegetable Dumplings"
+          ]
+        },
+        {
+          "sequence": 4,
+          "restaurant": "Dave's Hot Chicken",
+          "items": [
+            "Dave's Hot Mozz 1 Piece",
+            "Single Tender"
+          ]
+        }
+      ],
+      "answer": "M06"
+    },
+    {
+      "id": "H3",
+      "kind": "historical_next_order",
+      "history": [
+        {
+          "sequence": 1,
+          "restaurant": "Taco Bell",
+          "items": [
+            "Steak Quesadilla",
+            "Grilled Cheese Burrito"
+          ]
+        },
+        {
+          "sequence": 2,
+          "restaurant": "Dave's Hot Chicken",
+          "items": [
+            "Dave's #2: 2 Sliders w/ Fries"
+          ]
+        },
+        {
+          "sequence": 3,
+          "restaurant": "Panera Bread",
+          "items": [
+            "Greek Salad",
+            "Tuna Salad Sandwich"
+          ]
+        },
+        {
+          "sequence": 4,
+          "restaurant": "Bowls of Rice",
+          "items": [
+            "Crispy Garlic Sesame Fusion Chicken Rice Bowl",
+            "Spicy Yuzu Tofu Rice Bowl",
+            "Crispy Vegetable Dumplings"
+          ]
+        },
+        {
+          "sequence": 5,
+          "restaurant": "Dave's Hot Chicken",
+          "items": [
+            "Dave's Hot Mozz 1 Piece",
+            "Single Tender"
+          ]
+        }
+      ],
+      "answer": "M01"
+    },
+    {
+      "id": "NOW",
+      "kind": "current_craving",
+      "history": [
+        {
+          "sequence": 1,
+          "restaurant": "Bowls of Rice",
+          "items": [
+            "Crispy Garlic Sesame Fusion Chicken Rice Bowl"
+          ]
+        },
+        {
+          "sequence": 2,
+          "restaurant": "Taco Bell",
+          "items": [
+            "Steak Quesadilla",
+            "Grilled Cheese Burrito"
+          ]
+        },
+        {
+          "sequence": 3,
+          "restaurant": "Dave's Hot Chicken",
+          "items": [
+            "Dave's #2: 2 Sliders w/ Fries"
+          ]
+        },
+        {
+          "sequence": 4,
+          "restaurant": "Panera Bread",
+          "items": [
+            "Greek Salad",
+            "Tuna Salad Sandwich"
+          ]
+        },
+        {
+          "sequence": 5,
+          "restaurant": "Bowls of Rice",
+          "items": [
+            "Crispy Garlic Sesame Fusion Chicken Rice Bowl",
+            "Spicy Yuzu Tofu Rice Bowl",
+            "Crispy Vegetable Dumplings"
+          ]
+        },
+        {
+          "sequence": 6,
+          "restaurant": "Dave's Hot Chicken",
+          "items": [
+            "Dave's Hot Mozz 1 Piece",
+            "Single Tender"
+          ]
+        }
+      ],
+      "answer": "M03"
+    }
+  ],
+  "target": {
+    "restaurant": "Dave's Hot Chicken",
+    "items": [
+      "Dave's #2: 2 Sliders w/ Fries"
+    ],
+    "restaurant_aliases": [
+      "Dave’s Hot Chicken",
+      "Daves Hot Chicken"
+    ]
+  },
+  "results": [
+    {
+      "id": "sonnet",
+      "label": "Claude Sonnet 5.5",
+      "model": "claude-sonnet-5-5",
+      "cli": "claude",
+      "status": "ok",
+      "task_count": 4,
+      "score": 54.05,
+      "exact_hits": 0,
+      "cost_per_task_usd": 0.0077705,
+      "cost_sources": [
+        "claude_cli_estimate"
+      ],
+      "tokens_per_task": 1470.75,
+      "latency_per_task_seconds": 2.22875,
+      "tasks": [
+        {
+          "id": "sonnet",
+          "model": "claude-sonnet-5-5",
+          "cli": "claude",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.14,\"M02\":0.22,\"M03\":0.14,\"M04\":0.2,\"M05\":0.14,\"M06\":0.16}}",
+          "latency_seconds": 3.323,
+          "usage": {
+            "input_tokens": 2,
+            "cache_creation_input_tokens": 1331,
+            "cache_read_input_tokens": 0,
+            "output_tokens": 59,
+            "output_tokens_details": {
+              "thinking_tokens": 0
+            },
+            "server_tool_use": {
+              "web_search_requests": 0,
+              "web_fetch_requests": 0
+            },
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 1331,
+              "ephemeral_5m_input_tokens": 0
+            }
+          },
+          "model_usage": {
+            "claude-haiku-4-5-20251001": {
+              "inputTokens": 1428,
+              "outputTokens": 12,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0,
+              "webSearchRequests": 0,
+              "costUSD": 0.001488,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000,
+              "thinkingTokens": 0
+            },
+            "claude-sonnet-5-5": {
+              "inputTokens": 2,
+              "outputTokens": 59,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 1331,
+              "webSearchRequests": 0,
+              "costUSD": 0.005918,
+              "contextWindow": 1000000,
+              "maxOutputTokens": 128000,
+              "thinkingTokens": 0
+            }
+          },
+          "tokens_total": 1392,
+          "cost_usd": 0.007405999999999999,
+          "cost_source": "claude_cli_estimate",
+          "reported_model": "claude-haiku-4-5-20251001,claude-sonnet-5-5",
+          "error": null,
+          "task_id": "H1",
+          "score": 55.36000000000001,
+          "probabilities": {
+            "M01": 0.14,
+            "M02": 0.22,
+            "M03": 0.14,
+            "M04": 0.2,
+            "M05": 0.14,
+            "M06": 0.16
+          },
+          "top_choice": "M02",
+          "correct": false,
+          "estimated_cost_usd": 0.007405999999999999,
+          "estimated_cost_source": "claude_cli_estimate"
+        },
+        {
+          "id": "sonnet",
+          "model": "claude-sonnet-5-5",
+          "cli": "claude",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.08,\"M02\":0.17,\"M03\":0.2,\"M04\":0.2,\"M05\":0.2,\"M06\":0.15}}",
+          "latency_seconds": 2.023,
+          "usage": {
+            "input_tokens": 2,
+            "cache_creation_input_tokens": 1384,
+            "cache_read_input_tokens": 0,
+            "output_tokens": 59,
+            "output_tokens_details": {
+              "thinking_tokens": 0
+            },
+            "server_tool_use": {
+              "web_search_requests": 0,
+              "web_fetch_requests": 0
+            },
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 1384,
+              "ephemeral_5m_input_tokens": 0
+            }
+          },
+          "model_usage": {
+            "claude-haiku-4-5-20251001": {
+              "inputTokens": 1462,
+              "outputTokens": 12,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0,
+              "webSearchRequests": 0,
+              "costUSD": 0.001522,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000,
+              "thinkingTokens": 0
+            },
+            "claude-sonnet-5-5": {
+              "inputTokens": 2,
+              "outputTokens": 59,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 1384,
+              "webSearchRequests": 0,
+              "costUSD": 0.00613,
+              "contextWindow": 1000000,
+              "maxOutputTokens": 128000,
+              "thinkingTokens": 0
+            }
+          },
+          "tokens_total": 1445,
+          "cost_usd": 0.007652,
+          "cost_source": "claude_cli_estimate",
+          "reported_model": "claude-haiku-4-5-20251001,claude-sonnet-5-5",
+          "error": null,
+          "task_id": "H2",
+          "score": 56.11000000000001,
+          "probabilities": {
+            "M01": 0.08,
+            "M02": 0.17,
+            "M03": 0.2,
+            "M04": 0.2,
+            "M05": 0.2,
+            "M06": 0.15
+          },
+          "top_choice": "M03",
+          "correct": false,
+          "estimated_cost_usd": 0.007652,
+          "estimated_cost_source": "claude_cli_estimate"
+        },
+        {
+          "id": "sonnet",
+          "model": "claude-sonnet-5-5",
+          "cli": "claude",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.08,\"M02\":0.17,\"M03\":0.2,\"M04\":0.2,\"M05\":0.14,\"M06\":0.21}}",
+          "latency_seconds": 1.778,
+          "usage": {
+            "input_tokens": 2,
+            "cache_creation_input_tokens": 1432,
+            "cache_read_input_tokens": 0,
+            "output_tokens": 59,
+            "output_tokens_details": {
+              "thinking_tokens": 0
+            },
+            "server_tool_use": {
+              "web_search_requests": 0,
+              "web_fetch_requests": 0
+            },
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 1432,
+              "ephemeral_5m_input_tokens": 0
+            }
+          },
+          "model_usage": {
+            "claude-haiku-4-5-20251001": {
+              "inputTokens": 1496,
+              "outputTokens": 12,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0,
+              "webSearchRequests": 0,
+              "costUSD": 0.0015559999999999999,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000,
+              "thinkingTokens": 0
+            },
+            "claude-sonnet-5-5": {
+              "inputTokens": 2,
+              "outputTokens": 59,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 1432,
+              "webSearchRequests": 0,
+              "costUSD": 0.0063219999999999995,
+              "contextWindow": 1000000,
+              "maxOutputTokens": 128000,
+              "thinkingTokens": 0
+            }
+          },
+          "tokens_total": 1493,
+          "cost_usd": 0.007878,
+          "cost_source": "claude_cli_estimate",
+          "reported_model": "claude-haiku-4-5-20251001,claude-sonnet-5-5",
+          "error": null,
+          "task_id": "H3",
+          "score": 49.05,
+          "probabilities": {
+            "M01": 0.08,
+            "M02": 0.17,
+            "M03": 0.2,
+            "M04": 0.2,
+            "M05": 0.14,
+            "M06": 0.21
+          },
+          "top_choice": "M06",
+          "correct": false,
+          "estimated_cost_usd": 0.007878,
+          "estimated_cost_source": "claude_cli_estimate"
+        },
+        {
+          "id": "sonnet",
+          "model": "claude-sonnet-5-5",
+          "cli": "claude",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.27,\"M02\":0.15,\"M03\":0.15,\"M04\":0.12,\"M05\":0.1,\"M06\":0.21}}",
+          "latency_seconds": 1.791,
+          "usage": {
+            "input_tokens": 2,
+            "cache_creation_input_tokens": 1492,
+            "cache_read_input_tokens": 0,
+            "output_tokens": 59,
+            "output_tokens_details": {
+              "thinking_tokens": 0
+            },
+            "server_tool_use": {
+              "web_search_requests": 0,
+              "web_fetch_requests": 0
+            },
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 1492,
+              "ephemeral_5m_input_tokens": 0
+            }
+          },
+          "model_usage": {
+            "claude-haiku-4-5-20251001": {
+              "inputTokens": 1529,
+              "outputTokens": 11,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0,
+              "webSearchRequests": 0,
+              "costUSD": 0.001584,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000,
+              "thinkingTokens": 0
+            },
+            "claude-sonnet-5-5": {
+              "inputTokens": 2,
+              "outputTokens": 59,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 1492,
+              "webSearchRequests": 0,
+              "costUSD": 0.006562,
+              "contextWindow": 1000000,
+              "maxOutputTokens": 128000,
+              "thinkingTokens": 0
+            }
+          },
+          "tokens_total": 1553,
+          "cost_usd": 0.008146,
+          "cost_source": "claude_cli_estimate",
+          "reported_model": "claude-haiku-4-5-20251001,claude-sonnet-5-5",
+          "error": null,
+          "task_id": "NOW",
+          "score": 55.67999999999999,
+          "probabilities": {
+            "M01": 0.27,
+            "M02": 0.15,
+            "M03": 0.15,
+            "M04": 0.12,
+            "M05": 0.1,
+            "M06": 0.21
+          },
+          "top_choice": "M01",
+          "correct": false,
+          "estimated_cost_usd": 0.008146,
+          "estimated_cost_source": "claude_cli_estimate"
+        }
+      ],
+      "audit": {
+        "id": "A5",
+        "exact_hits": 0,
+        "roast": "Bold M02 pick, still starving at zero."
+      }
+    },
+    {
+      "id": "opus",
+      "label": "Claude Opus 5.5",
+      "model": "claude-opus-5-5",
+      "cli": "claude",
+      "status": "ok",
+      "task_count": 4,
+      "score": 53.64,
+      "exact_hits": 0,
+      "cost_per_task_usd": 0.01398475,
+      "cost_sources": [
+        "claude_cli_estimate"
+      ],
+      "tokens_per_task": 1468.25,
+      "latency_per_task_seconds": 3.5797499999999998,
+      "tasks": [
+        {
+          "id": "opus",
+          "model": "claude-opus-5-5",
+          "cli": "claude",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.12,\"M02\":0.2,\"M03\":0.12,\"M04\":0.18,\"M05\":0.24,\"M06\":0.14}}",
+          "latency_seconds": 2.909,
+          "usage": {
+            "input_tokens": 2,
+            "cache_creation_input_tokens": 1327,
+            "cache_read_input_tokens": 0,
+            "output_tokens": 59,
+            "output_tokens_details": {
+              "thinking_tokens": 0
+            },
+            "server_tool_use": {
+              "web_search_requests": 0,
+              "web_fetch_requests": 0
+            },
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 1327,
+              "ephemeral_5m_input_tokens": 0
+            }
+          },
+          "model_usage": {
+            "claude-haiku-4-5-20251001": {
+              "inputTokens": 1428,
+              "outputTokens": 12,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0,
+              "webSearchRequests": 0,
+              "costUSD": 0.001488,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000,
+              "thinkingTokens": 0
+            },
+            "claude-opus-5-5": {
+              "inputTokens": 2,
+              "outputTokens": 59,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 1327,
+              "webSearchRequests": 0,
+              "costUSD": 0.011804,
+              "contextWindow": 1000000,
+              "maxOutputTokens": 128000,
+              "thinkingTokens": 0
+            }
+          },
+          "tokens_total": 1388,
+          "cost_usd": 0.013292,
+          "cost_source": "claude_cli_estimate",
+          "reported_model": "claude-haiku-4-5-20251001,claude-opus-5-5",
+          "error": null,
+          "task_id": "H1",
+          "score": 53.07999999999999,
+          "probabilities": {
+            "M01": 0.12,
+            "M02": 0.2,
+            "M03": 0.12,
+            "M04": 0.18,
+            "M05": 0.24,
+            "M06": 0.14
+          },
+          "top_choice": "M05",
+          "correct": false,
+          "estimated_cost_usd": 0.013292,
+          "estimated_cost_source": "claude_cli_estimate"
+        },
+        {
+          "id": "opus",
+          "model": "claude-opus-5-5",
+          "cli": "claude",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.12,\"M02\":0.17,\"M03\":0.22,\"M04\":0.21,\"M05\":0.17,\"M06\":0.11}}",
+          "latency_seconds": 3.158,
+          "usage": {
+            "input_tokens": 2,
+            "cache_creation_input_tokens": 1382,
+            "cache_read_input_tokens": 0,
+            "output_tokens": 59,
+            "output_tokens_details": {
+              "thinking_tokens": 0
+            },
+            "server_tool_use": {
+              "web_search_requests": 0,
+              "web_fetch_requests": 0
+            },
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 1382,
+              "ephemeral_5m_input_tokens": 0
+            }
+          },
+          "model_usage": {
+            "claude-haiku-4-5-20251001": {
+              "inputTokens": 1462,
+              "outputTokens": 12,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0,
+              "webSearchRequests": 0,
+              "costUSD": 0.001522,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000,
+              "thinkingTokens": 0
+            },
+            "claude-opus-5-5": {
+              "inputTokens": 2,
+              "outputTokens": 59,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 1382,
+              "webSearchRequests": 0,
+              "costUSD": 0.012244,
+              "contextWindow": 1000000,
+              "maxOutputTokens": 128000,
+              "thinkingTokens": 0
+            }
+          },
+          "tokens_total": 1443,
+          "cost_usd": 0.013766,
+          "cost_source": "claude_cli_estimate",
+          "reported_model": "claude-haiku-4-5-20251001,claude-opus-5-5",
+          "error": null,
+          "task_id": "H2",
+          "score": 52.160000000000004,
+          "probabilities": {
+            "M01": 0.12,
+            "M02": 0.17,
+            "M03": 0.22,
+            "M04": 0.21,
+            "M05": 0.17,
+            "M06": 0.11
+          },
+          "top_choice": "M03",
+          "correct": false,
+          "estimated_cost_usd": 0.013766,
+          "estimated_cost_source": "claude_cli_estimate"
+        },
+        {
+          "id": "opus",
+          "model": "claude-opus-5-5",
+          "cli": "claude",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M06\":0.2,\"M02\":0.17,\"M01\":0.1,\"M05\":0.15,\"M03\":0.2,\"M04\":0.18}}",
+          "latency_seconds": 3.888,
+          "usage": {
+            "input_tokens": 2,
+            "cache_creation_input_tokens": 1431,
+            "cache_read_input_tokens": 0,
+            "output_tokens": 59,
+            "output_tokens_details": {
+              "thinking_tokens": 0
+            },
+            "server_tool_use": {
+              "web_search_requests": 0,
+              "web_fetch_requests": 0
+            },
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 1431,
+              "ephemeral_5m_input_tokens": 0
+            }
+          },
+          "model_usage": {
+            "claude-haiku-4-5-20251001": {
+              "inputTokens": 1496,
+              "outputTokens": 12,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0,
+              "webSearchRequests": 0,
+              "costUSD": 0.0015559999999999999,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000,
+              "thinkingTokens": 0
+            },
+            "claude-opus-5-5": {
+              "inputTokens": 2,
+              "outputTokens": 59,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 1431,
+              "webSearchRequests": 0,
+              "costUSD": 0.012636,
+              "contextWindow": 1000000,
+              "maxOutputTokens": 128000,
+              "thinkingTokens": 0
+            }
+          },
+          "tokens_total": 1492,
+          "cost_usd": 0.014192,
+          "cost_source": "claude_cli_estimate",
+          "reported_model": "claude-haiku-4-5-20251001,claude-opus-5-5",
+          "error": null,
+          "task_id": "H3",
+          "score": 51.30999999999999,
+          "probabilities": {
+            "M01": 0.1,
+            "M02": 0.17,
+            "M03": 0.2,
+            "M04": 0.18,
+            "M05": 0.15,
+            "M06": 0.2
+          },
+          "top_choice": "M03",
+          "correct": false,
+          "estimated_cost_usd": 0.014192,
+          "estimated_cost_source": "claude_cli_estimate"
+        },
+        {
+          "id": "opus",
+          "model": "claude-opus-5-5",
+          "cli": "claude",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.26,\"M02\":0.14,\"M03\":0.17,\"M04\":0.13,\"M05\":0.12,\"M06\":0.18}}",
+          "latency_seconds": 4.364,
+          "usage": {
+            "input_tokens": 2,
+            "cache_creation_input_tokens": 1489,
+            "cache_read_input_tokens": 0,
+            "output_tokens": 59,
+            "output_tokens_details": {
+              "thinking_tokens": 0
+            },
+            "server_tool_use": {
+              "web_search_requests": 0,
+              "web_fetch_requests": 0
+            },
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 1489,
+              "ephemeral_5m_input_tokens": 0
+            }
+          },
+          "model_usage": {
+            "claude-haiku-4-5-20251001": {
+              "inputTokens": 1529,
+              "outputTokens": 12,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0,
+              "webSearchRequests": 0,
+              "costUSD": 0.001589,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000,
+              "thinkingTokens": 0
+            },
+            "claude-opus-5-5": {
+              "inputTokens": 2,
+              "outputTokens": 59,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 1489,
+              "webSearchRequests": 0,
+              "costUSD": 0.0131,
+              "contextWindow": 1000000,
+              "maxOutputTokens": 128000,
+              "thinkingTokens": 0
+            }
+          },
+          "tokens_total": 1550,
+          "cost_usd": 0.014689,
+          "cost_source": "claude_cli_estimate",
+          "reported_model": "claude-haiku-4-5-20251001,claude-opus-5-5",
+          "error": null,
+          "task_id": "NOW",
+          "score": 58.010000000000005,
+          "probabilities": {
+            "M01": 0.26,
+            "M02": 0.14,
+            "M03": 0.17,
+            "M04": 0.13,
+            "M05": 0.12,
+            "M06": 0.18
+          },
+          "top_choice": "M01",
+          "correct": false,
+          "estimated_cost_usd": 0.014689,
+          "estimated_cost_source": "claude_cli_estimate"
+        }
+      ],
+      "audit": {
+        "id": "A2",
+        "exact_hits": 0,
+        "roast": "Copied A1's homework, including every mistake."
+      }
+    },
+    {
+      "id": "astra",
+      "label": "GPT Astra",
+      "model": "gpt-6-astra",
+      "cli": "codex",
+      "status": "ok",
+      "task_count": 4,
+      "score": 51.50749999999999,
+      "exact_hits": 0,
+      "cost_per_task_usd": 0.0533365,
+      "cost_sources": [
+        "reference_price_estimate"
+      ],
+      "tokens_per_task": 6343.25,
+      "latency_per_task_seconds": 5.712,
+      "tasks": [
+        {
+          "id": "astra",
+          "model": "gpt-6-astra",
+          "cli": "codex",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.13,\"M02\":0.23,\"M03\":0.1,\"M04\":0.2,\"M05\":0.27,\"M06\":0.07}}",
+          "latency_seconds": 5.911,
+          "usage": {
+            "input_tokens": 6252,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 50,
+            "reasoning_output_tokens": 0
+          },
+          "model_usage": null,
+          "tokens_total": 6302,
+          "cost_usd": null,
+          "cost_source": "unreported",
+          "reported_model": null,
+          "error": null,
+          "task_id": "H1",
+          "score": 50.12,
+          "probabilities": {
+            "M01": 0.13,
+            "M02": 0.23,
+            "M03": 0.1,
+            "M04": 0.2,
+            "M05": 0.27,
+            "M06": 0.07
+          },
+          "top_choice": "M05",
+          "correct": false,
+          "estimated_cost_usd": 0.06502,
+          "estimated_cost_source": "reference_price_estimate"
+        },
+        {
+          "id": "astra",
+          "model": "gpt-6-astra",
+          "cli": "codex",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.12,\"M02\":0.19,\"M03\":0.25,\"M04\":0.18,\"M05\":0.20,\"M06\":0.06}}",
+          "latency_seconds": 6.138,
+          "usage": {
+            "input_tokens": 6281,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 50,
+            "reasoning_output_tokens": 0
+          },
+          "model_usage": null,
+          "tokens_total": 6331,
+          "cost_usd": null,
+          "cost_source": "unreported",
+          "reported_model": null,
+          "error": null,
+          "task_id": "H2",
+          "score": 46.550000000000004,
+          "probabilities": {
+            "M01": 0.12,
+            "M02": 0.19,
+            "M03": 0.25,
+            "M04": 0.18,
+            "M05": 0.2,
+            "M06": 0.06
+          },
+          "top_choice": "M03",
+          "correct": false,
+          "estimated_cost_usd": 0.06531,
+          "estimated_cost_source": "reference_price_estimate"
+        },
+        {
+          "id": "astra",
+          "model": "gpt-6-astra",
+          "cli": "codex",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.09,\"M02\":0.16,\"M03\":0.23,\"M04\":0.14,\"M05\":0.17,\"M06\":0.21}}",
+          "latency_seconds": 4.972,
+          "usage": {
+            "input_tokens": 6308,
+            "cached_input_tokens": 2688,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 50,
+            "reasoning_output_tokens": 0
+          },
+          "model_usage": null,
+          "tokens_total": 6358,
+          "cost_usd": null,
+          "cost_source": "unreported",
+          "reported_model": null,
+          "error": null,
+          "task_id": "H3",
+          "score": 50.03999999999999,
+          "probabilities": {
+            "M01": 0.09,
+            "M02": 0.16,
+            "M03": 0.23,
+            "M04": 0.14,
+            "M05": 0.17,
+            "M06": 0.21
+          },
+          "top_choice": "M03",
+          "correct": false,
+          "estimated_cost_usd": 0.041388,
+          "estimated_cost_source": "reference_price_estimate"
+        },
+        {
+          "id": "astra",
+          "model": "gpt-6-astra",
+          "cli": "codex",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.23,\"M02\":0.16,\"M03\":0.18,\"M04\":0.13,\"M05\":0.13,\"M06\":0.17}}",
+          "latency_seconds": 5.827,
+          "usage": {
+            "input_tokens": 6332,
+            "cached_input_tokens": 2688,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 50,
+            "reasoning_output_tokens": 0
+          },
+          "model_usage": null,
+          "tokens_total": 6382,
+          "cost_usd": null,
+          "cost_source": "unreported",
+          "reported_model": null,
+          "error": null,
+          "task_id": "NOW",
+          "score": 59.31999999999999,
+          "probabilities": {
+            "M01": 0.23,
+            "M02": 0.16,
+            "M03": 0.18,
+            "M04": 0.13,
+            "M05": 0.13,
+            "M06": 0.17
+          },
+          "top_choice": "M01",
+          "correct": false,
+          "estimated_cost_usd": 0.041628,
+          "estimated_cost_source": "reference_price_estimate"
+        }
+      ],
+      "audit": {
+        "id": "A1",
+        "exact_hits": 0,
+        "roast": "Zero for four; ordered the wrong menu entirely."
+      }
+    },
+    {
+      "id": "sol",
+      "label": "GPT Sol",
+      "model": "gpt-6.1-sol",
+      "cli": "codex",
+      "status": "ok",
+      "task_count": 4,
+      "score": 51.01,
+      "exact_hits": 0,
+      "cost_per_task_usd": 0.0092571,
+      "cost_sources": [
+        "reference_price_estimate"
+      ],
+      "tokens_per_task": 6343.75,
+      "latency_per_task_seconds": 5.44925,
+      "tasks": [
+        {
+          "id": "sol",
+          "model": "gpt-6.1-sol",
+          "cli": "codex",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.13,\"M02\":0.23,\"M03\":0.1,\"M04\":0.2,\"M05\":0.27,\"M06\":0.07}}",
+          "latency_seconds": 5.077,
+          "usage": {
+            "input_tokens": 6254,
+            "cached_input_tokens": 2688,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 50,
+            "reasoning_output_tokens": 0
+          },
+          "model_usage": null,
+          "tokens_total": 6304,
+          "cost_usd": null,
+          "cost_source": "unreported",
+          "reported_model": null,
+          "error": null,
+          "task_id": "H1",
+          "score": 50.12,
+          "probabilities": {
+            "M01": 0.13,
+            "M02": 0.23,
+            "M03": 0.1,
+            "M04": 0.2,
+            "M05": 0.27,
+            "M06": 0.07
+          },
+          "top_choice": "M05",
+          "correct": false,
+          "estimated_cost_usd": 0.0079008,
+          "estimated_cost_source": "reference_price_estimate"
+        },
+        {
+          "id": "sol",
+          "model": "gpt-6.1-sol",
+          "cli": "codex",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.11,\"M02\":0.19,\"M03\":0.28,\"M04\":0.17,\"M05\":0.21,\"M06\":0.04}}",
+          "latency_seconds": 6.25,
+          "usage": {
+            "input_tokens": 6283,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 50,
+            "reasoning_output_tokens": 0
+          },
+          "model_usage": null,
+          "tokens_total": 6333,
+          "cost_usd": null,
+          "cost_source": "unreported",
+          "reported_model": null,
+          "error": null,
+          "task_id": "H2",
+          "score": 43.94,
+          "probabilities": {
+            "M01": 0.11,
+            "M02": 0.19,
+            "M03": 0.28,
+            "M04": 0.17,
+            "M05": 0.21,
+            "M06": 0.04
+          },
+          "top_choice": "M03",
+          "correct": false,
+          "estimated_cost_usd": 0.013066,
+          "estimated_cost_source": "reference_price_estimate"
+        },
+        {
+          "id": "sol",
+          "model": "gpt-6.1-sol",
+          "cli": "codex",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.09,\"M02\":0.15,\"M03\":0.23,\"M04\":0.14,\"M05\":0.17,\"M06\":0.22}}",
+          "latency_seconds": 5.376,
+          "usage": {
+            "input_tokens": 6310,
+            "cached_input_tokens": 2688,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 50,
+            "reasoning_output_tokens": 0
+          },
+          "model_usage": null,
+          "tokens_total": 6360,
+          "cost_usd": null,
+          "cost_source": "unreported",
+          "reported_model": null,
+          "error": null,
+          "task_id": "H3",
+          "score": 49.980000000000004,
+          "probabilities": {
+            "M01": 0.09,
+            "M02": 0.15,
+            "M03": 0.23,
+            "M04": 0.14,
+            "M05": 0.17,
+            "M06": 0.22
+          },
+          "top_choice": "M03",
+          "correct": false,
+          "estimated_cost_usd": 0.0080128,
+          "estimated_cost_source": "reference_price_estimate"
+        },
+        {
+          "id": "sol",
+          "model": "gpt-6.1-sol",
+          "cli": "codex",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.25,\"M02\":0.15,\"M03\":0.19,\"M04\":0.11,\"M05\":0.12,\"M06\":0.18}}",
+          "latency_seconds": 5.094,
+          "usage": {
+            "input_tokens": 6328,
+            "cached_input_tokens": 2688,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 50,
+            "reasoning_output_tokens": 0
+          },
+          "model_usage": null,
+          "tokens_total": 6378,
+          "cost_usd": null,
+          "cost_source": "unreported",
+          "reported_model": null,
+          "error": null,
+          "task_id": "NOW",
+          "score": 59.999999999999986,
+          "probabilities": {
+            "M01": 0.25,
+            "M02": 0.15,
+            "M03": 0.19,
+            "M04": 0.11,
+            "M05": 0.12,
+            "M06": 0.18
+          },
+          "top_choice": "M01",
+          "correct": false,
+          "estimated_cost_usd": 0.0080488,
+          "estimated_cost_source": "reference_price_estimate"
+        }
+      ],
+      "audit": {
+        "id": "A3",
+        "exact_hits": 0,
+        "roast": "Third identical whiff; the herd ate nothing."
+      }
+    },
+    {
+      "id": "muse",
+      "label": "Meta Muse Spark",
+      "model": "meta/muse-spark-1.3-contributor",
+      "cli": "opencode",
+      "status": "ok",
+      "task_count": 4,
+      "score": 49.3325,
+      "exact_hits": 0,
+      "cost_per_task_usd": 0.00012790000000000002,
+      "cost_sources": [
+        "opencode_cli_estimate"
+      ],
+      "tokens_per_task": 970.5,
+      "latency_per_task_seconds": 7.20575,
+      "tasks": [
+        {
+          "id": "muse",
+          "model": "meta/muse-spark-1.3-contributor",
+          "cli": "opencode",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M04\":0.2,\"M02\":0.25,\"M05\":0.3,\"M06\":0.07,\"M03\":0.08,\"M01\":0.1}}",
+          "latency_seconds": 6.826,
+          "usage": {
+            "total": 967,
+            "input": 625,
+            "output": 76,
+            "reasoning": 266,
+            "cache": {
+              "write": 0,
+              "read": 0
+            }
+          },
+          "model_usage": null,
+          "tokens_total": 967,
+          "cost_usd": 0.0001309,
+          "cost_source": "opencode_cli_estimate",
+          "reported_model": null,
+          "error": null,
+          "task_id": "H1",
+          "score": 47.309999999999995,
+          "probabilities": {
+            "M01": 0.1,
+            "M02": 0.25,
+            "M03": 0.08,
+            "M04": 0.2,
+            "M05": 0.3,
+            "M06": 0.07
+          },
+          "top_choice": "M05",
+          "correct": false,
+          "estimated_cost_usd": 0.0001309,
+          "estimated_cost_source": "opencode_cli_estimate"
+        },
+        {
+          "id": "muse",
+          "model": "meta/muse-spark-1.3-contributor",
+          "cli": "opencode",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.08,\"M02\":0.2,\"M03\":0.26,\"M04\":0.18,\"M05\":0.22,\"M06\":0.06}}",
+          "latency_seconds": 7.298,
+          "usage": {
+            "total": 945,
+            "input": 651,
+            "output": 56,
+            "reasoning": 238,
+            "cache": {
+              "write": 0,
+              "read": 0
+            }
+          },
+          "model_usage": null,
+          "tokens_total": 945,
+          "cost_usd": 0.0001239,
+          "cost_source": "opencode_cli_estimate",
+          "reported_model": null,
+          "error": null,
+          "task_id": "H2",
+          "score": 46.08,
+          "probabilities": {
+            "M01": 0.08,
+            "M02": 0.2,
+            "M03": 0.26,
+            "M04": 0.18,
+            "M05": 0.22,
+            "M06": 0.06
+          },
+          "top_choice": "M03",
+          "correct": false,
+          "estimated_cost_usd": 0.0001239,
+          "estimated_cost_source": "opencode_cli_estimate"
+        },
+        {
+          "id": "muse",
+          "model": "meta/muse-spark-1.3-contributor",
+          "cli": "opencode",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M06\":0.25,\"M02\":0.17,\"M01\":0.05,\"M05\":0.18,\"M03\":0.2,\"M04\":0.15}}",
+          "latency_seconds": 8.482,
+          "usage": {
+            "total": 953,
+            "input": 674,
+            "output": 56,
+            "reasoning": 223,
+            "cache": {
+              "write": 0,
+              "read": 0
+            }
+          },
+          "model_usage": null,
+          "tokens_total": 953,
+          "cost_usd": 0.0001232,
+          "cost_source": "opencode_cli_estimate",
+          "reported_model": null,
+          "error": null,
+          "task_id": "H3",
+          "score": 45.56,
+          "probabilities": {
+            "M01": 0.05,
+            "M02": 0.17,
+            "M03": 0.2,
+            "M04": 0.15,
+            "M05": 0.18,
+            "M06": 0.25
+          },
+          "top_choice": "M06",
+          "correct": false,
+          "estimated_cost_usd": 0.0001232,
+          "estimated_cost_source": "opencode_cli_estimate"
+        },
+        {
+          "id": "muse",
+          "model": "meta/muse-spark-1.3-contributor",
+          "cli": "opencode",
+          "status": "ok",
+          "text": "{\"probabilities\":{\"M01\":0.22,\"M02\":0.14,\"M03\":0.17,\"M04\":0.13,\"M05\":0.15,\"M06\":0.19}}",
+          "latency_seconds": 6.217,
+          "usage": {
+            "total": 1017,
+            "input": 698,
+            "output": 56,
+            "reasoning": 263,
+            "cache": {
+              "write": 0,
+              "read": 0
+            }
+          },
+          "model_usage": null,
+          "tokens_total": 1017,
+          "cost_usd": 0.0001336,
+          "cost_source": "opencode_cli_estimate",
+          "reported_model": null,
+          "error": null,
+          "task_id": "NOW",
+          "score": 58.38000000000001,
+          "probabilities": {
+            "M01": 0.22,
+            "M02": 0.14,
+            "M03": 0.17,
+            "M04": 0.13,
+            "M05": 0.15,
+            "M06": 0.19
+          },
+          "top_choice": "M01",
+          "correct": false,
+          "estimated_cost_usd": 0.0001336,
+          "estimated_cost_source": "opencode_cli_estimate"
+        }
+      ],
+      "audit": {
+        "id": "A4",
+        "exact_hits": 0,
+        "roast": "Right meal M06, wrong hour."
+      }
+    }
+  ],
+  "baselines": [
+    {
+      "id": "uniform",
+      "label": "Uniform chance",
+      "baseline": true,
+      "status": "ok",
+      "score": 58.33333333333333,
+      "exact_hits": 1,
+      "task_count": 4,
+      "cost_per_task_usd": 0.0,
+      "tokens_per_task": 0.0,
+      "tasks": [
+        {
+          "task_id": "H1",
+          "probabilities": {
+            "M01": 0.16666666666666666,
+            "M02": 0.16666666666666666,
+            "M03": 0.16666666666666666,
+            "M04": 0.16666666666666666,
+            "M05": 0.16666666666666666,
+            "M06": 0.16666666666666666
+          },
+          "score": 58.33333333333333,
+          "top_choice": "M01",
+          "correct": false
+        },
+        {
+          "task_id": "H2",
+          "probabilities": {
+            "M01": 0.16666666666666666,
+            "M02": 0.16666666666666666,
+            "M03": 0.16666666666666666,
+            "M04": 0.16666666666666666,
+            "M05": 0.16666666666666666,
+            "M06": 0.16666666666666666
+          },
+          "score": 58.33333333333333,
+          "top_choice": "M01",
+          "correct": false
+        },
+        {
+          "task_id": "H3",
+          "probabilities": {
+            "M01": 0.16666666666666666,
+            "M02": 0.16666666666666666,
+            "M03": 0.16666666666666666,
+            "M04": 0.16666666666666666,
+            "M05": 0.16666666666666666,
+            "M06": 0.16666666666666666
+          },
+          "score": 58.33333333333333,
+          "top_choice": "M01",
+          "correct": true
+        },
+        {
+          "task_id": "NOW",
+          "probabilities": {
+            "M01": 0.16666666666666666,
+            "M02": 0.16666666666666666,
+            "M03": 0.16666666666666666,
+            "M04": 0.16666666666666666,
+            "M05": 0.16666666666666666,
+            "M06": 0.16666666666666666
+          },
+          "score": 58.33333333333333,
+          "top_choice": "M01",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "frequency",
+      "label": "Order frequency",
+      "baseline": true,
+      "status": "ok",
+      "score": 50.24115114795919,
+      "exact_hits": 0,
+      "task_count": 4,
+      "cost_per_task_usd": 0.0,
+      "tokens_per_task": 0.0,
+      "tasks": [
+        {
+          "task_id": "H1",
+          "probabilities": {
+            "M01": 0.08333333333333333,
+            "M02": 0.25,
+            "M03": 0.08333333333333333,
+            "M04": 0.25,
+            "M05": 0.25,
+            "M06": 0.08333333333333333
+          },
+          "score": 47.91666666666667,
+          "top_choice": "M02",
+          "correct": false
+        },
+        {
+          "task_id": "H2",
+          "probabilities": {
+            "M01": 0.07142857142857142,
+            "M02": 0.21428571428571427,
+            "M03": 0.21428571428571427,
+            "M04": 0.21428571428571427,
+            "M05": 0.21428571428571427,
+            "M06": 0.07142857142857142
+          },
+          "score": 47.44897959183674,
+          "top_choice": "M02",
+          "correct": false
+        },
+        {
+          "task_id": "H3",
+          "probabilities": {
+            "M01": 0.0625,
+            "M02": 0.1875,
+            "M03": 0.1875,
+            "M04": 0.1875,
+            "M05": 0.1875,
+            "M06": 0.1875
+          },
+          "score": 47.265625,
+          "top_choice": "M02",
+          "correct": false
+        },
+        {
+          "task_id": "NOW",
+          "probabilities": {
+            "M01": 0.16666666666666666,
+            "M02": 0.16666666666666666,
+            "M03": 0.16666666666666666,
+            "M04": 0.16666666666666666,
+            "M05": 0.16666666666666666,
+            "M06": 0.16666666666666666
+          },
+          "score": 58.33333333333333,
+          "top_choice": "M01",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "recent",
+      "label": "Repeat latest",
+      "baseline": true,
+      "status": "ok",
+      "score": 0.0,
+      "exact_hits": 0,
+      "task_count": 4,
+      "cost_per_task_usd": 0.0,
+      "tokens_per_task": 0.0,
+      "tasks": [
+        {
+          "task_id": "H1",
+          "probabilities": {
+            "M01": 0.0,
+            "M02": 0.0,
+            "M03": 0.0,
+            "M04": 0.0,
+            "M05": 1.0,
+            "M06": 0.0
+          },
+          "score": 0.0,
+          "top_choice": "M05",
+          "correct": false
+        },
+        {
+          "task_id": "H2",
+          "probabilities": {
+            "M01": 0.0,
+            "M02": 0.0,
+            "M03": 1.0,
+            "M04": 0.0,
+            "M05": 0.0,
+            "M06": 0.0
+          },
+          "score": 0.0,
+          "top_choice": "M03",
+          "correct": false
+        },
+        {
+          "task_id": "H3",
+          "probabilities": {
+            "M01": 0.0,
+            "M02": 0.0,
+            "M03": 0.0,
+            "M04": 0.0,
+            "M05": 0.0,
+            "M06": 1.0
+          },
+          "score": 0.0,
+          "top_choice": "M06",
+          "correct": false
+        },
+        {
+          "task_id": "NOW",
+          "probabilities": {
+            "M01": 1.0,
+            "M02": 0.0,
+            "M03": 0.0,
+            "M04": 0.0,
+            "M05": 0.0,
+            "M06": 0.0
+          },
+          "score": 0.0,
+          "top_choice": "M01",
+          "correct": false
+        }
+      ]
+    }
+  ],
+  "setup": {
+    "id": "sonnet",
+    "model": "claude-sonnet-5-5",
+    "cli": "claude",
+    "status": "ok",
+    "text": "{\"guide\":\"For each task, assign a probability to every fixed meal choice from the provided history, using patterns like frequency, recency, and timing. Probabilities must be nonnegative and sum to 1 (within 0.005). Avoid overconfidence, since Brier loss penalizes confident misses. Predict only known menu items; each task runs in isolation.\",\"score_explanation\":\"Score is 100 × (1 − Brier loss/2), averaged over all four tasks. Brier loss sums squared errors against the true meal. Lower loss gives a higher score; 100 is perfect.\"}",
+    "latency_seconds": 4.563,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 928,
+      "cache_read_input_tokens": 0,
+      "output_tokens": 192,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 928,
+        "ephemeral_5m_input_tokens": 0
+      }
+    },
+    "model_usage": {
+      "claude-haiku-4-5-20251001": {
+        "inputTokens": 1181,
+        "outputTokens": 16,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.001261,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "thinkingTokens": 0
+      },
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 192,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 928,
+        "webSearchRequests": 0,
+        "costUSD": 0.005636,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0
+      }
+    },
+    "tokens_total": 1122,
+    "cost_usd": 0.006897,
+    "cost_source": "claude_cli_estimate",
+    "reported_model": "claude-haiku-4-5-20251001,claude-sonnet-5-5",
+    "error": null
+  },
+  "evaluator": {
+    "id": "opus",
+    "model": "claude-opus-5-5",
+    "cli": "claude",
+    "status": "ok",
+    "text": "{\"audits\":[{\"id\":\"A1\",\"exact_hits\":0,\"roast\":\"Zero for four; ordered the wrong menu entirely.\"},{\"id\":\"A2\",\"exact_hits\":0,\"roast\":\"Copied A1's homework, including every mistake.\"},{\"id\":\"A3\",\"exact_hits\":0,\"roast\":\"Third identical whiff; the herd ate nothing.\"},{\"id\":\"A4\",\"exact_hits\":0,\"roast\":\"Right meal M06, wrong hour.\"},{\"id\":\"A5\",\"exact_hits\":0,\"roast\":\"Bold M02 pick, still starving at zero.\"}]}",
+    "latency_seconds": 5.423,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 914,
+      "cache_read_input_tokens": 0,
+      "output_tokens": 294,
+      "output_tokens_details": {
+        "thinking_tokens": 94
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 914,
+        "ephemeral_5m_input_tokens": 0
+      }
+    },
+    "model_usage": {
+      "claude-haiku-4-5-20251001": {
+        "inputTokens": 1180,
+        "outputTokens": 15,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.001255,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "thinkingTokens": 0
+      },
+      "claude-opus-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 294,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 914,
+        "webSearchRequests": 0,
+        "costUSD": 0.0132,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 94
+      }
+    },
+    "tokens_total": 1210,
+    "cost_usd": 0.014454999999999999,
+    "cost_source": "claude_cli_estimate",
+    "reported_model": "claude-haiku-4-5-20251001,claude-opus-5-5",
+    "error": null,
+    "audit_verified": true
+  },
+  "cost_basis": "Estimated API-equivalent prediction cost. Includes CLI context/cache/output; excludes shared setup/evaluator and subscription fees.",
+  "score_basis": "100 * (1 - multiclass Brier loss / 2), averaged across all four tasks",
+  "shared_overhead": {
+    "setup_tokens": 1122,
+    "evaluator_tokens": 1210,
+    "setup_cost_usd": 0.006897,
+    "evaluator_cost_usd": 0.014454999999999999
+  }
+}

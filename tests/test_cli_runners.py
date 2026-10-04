@@ -18,6 +18,9 @@ class ResponseTests(unittest.TestCase):
         result = runners._parse_response("codex", "\n".join(map(json.dumps, events)))
         self.assertEqual(result["status"], "ok")
         self.assertEqual(result["usage"]["input_tokens"], 51)
+        self.assertEqual(result["tokens_total"], 59)
+        self.assertIsNone(result["cost_usd"])
+        self.assertEqual(result["cost_source"], "unreported")
         self.assertNotIn("private", result["text"])
         self.assertIsNone(result["reported_model"])
 
@@ -29,6 +32,7 @@ class ResponseTests(unittest.TestCase):
         result = runners._parse_response("opencode", "\n".join(map(json.dumps, events)))
         self.assertEqual(result["status"], "ok")
         self.assertEqual(result["usage"]["cache"]["read"], 3)
+        self.assertEqual(result["tokens_total"], 21)
 
     def test_claude_reports_model_and_usage_without_invented_counts(self):
         event = {"type": "result", "subtype": "success", "result": '{"pick":"daves"}',
@@ -37,6 +41,73 @@ class ResponseTests(unittest.TestCase):
         result = runners._parse_response("claude", json.dumps(event))
         self.assertEqual(result["reported_model"], "claude-sonnet-5-5")
         self.assertEqual(result["usage"], {"input_tokens": 100, "output_tokens": 9})
+        self.assertEqual(result["tokens_total"], 109)
+
+    def test_claude_cost_and_cache_creation_detail_are_not_double_counted(self):
+        event = {"type": "result", "subtype": "success", "result": "answer",
+                 "total_cost_usd": 0.023,
+                 "usage": {"input_tokens": 100, "output_tokens": 9,
+                           "cache_creation_input_tokens": 50, "cache_read_input_tokens": 200,
+                           "cache_creation": {"ephemeral_5m_input_tokens": 30,
+                                              "ephemeral_1h_input_tokens": 20}},
+                 "modelUsage": {"claude-sonnet-5-5": {"inputTokens": 100, "costUSD": 0.023,
+                                                       "private": "do not retain"}}}
+        result = runners._parse_response("claude", json.dumps(event))
+        self.assertEqual(result["tokens_total"], 359)
+        self.assertEqual(result["cost_usd"], 0.023)
+        self.assertEqual(result["cost_source"], "claude_cli_estimate")
+        self.assertEqual(result["model_usage"], {"claude-sonnet-5-5": {"inputTokens": 100, "costUSD": 0.023}})
+
+    def test_open_code_sums_costs_and_honors_reasoning_in_total(self):
+        events = [
+            {"type": "text", "part": {"text": "answer"}},
+            {"type": "step_finish", "part": {"cost": 0.01, "reason": "continue",
+                "tokens": {"input": 12, "output": 4, "reasoning": 2,
+                           "cache": {"read": 3, "write": 0}, "total": 21}}},
+            {"type": "step_finish", "part": {"cost": 0.02, "reason": "stop",
+                "tokens": {"input": 9, "output": 5, "reasoning": 7,
+                           "cache": {"read": 1, "write": 0}, "total": 22}}},
+        ]
+        result = runners._parse_response("opencode", "\n".join(map(json.dumps, events)))
+        self.assertEqual(result["tokens_total"], 43)
+        self.assertAlmostEqual(result["cost_usd"], 0.03)
+        self.assertEqual(result["cost_source"], "opencode_cli_estimate")
+
+    def test_missing_step_metadata_does_not_make_partial_sum_look_complete(self):
+        events = [{"type": "text", "part": {"text": "answer"}},
+                  {"type": "step_finish", "part": {"cost": 0.02, "tokens": {"total": 30}}},
+                  {"type": "step_finish", "part": {"reason": "stop"}}]
+        result = runners._parse_response("opencode", "\n".join(map(json.dumps, events)))
+        self.assertIsNone(result["tokens_total"])
+        self.assertIsNone(result["cost_usd"])
+        self.assertEqual(result["cost_source"], "unreported")
+
+    def test_explicit_zero_cost_is_reported_but_missing_cost_is_unknown(self):
+        for value, expected in [(0, 0), (None, None), (-1, None), (True, None), (float("nan"), None)]:
+            with self.subTest(cost=value):
+                event = {"type": "result", "subtype": "success", "result": "answer",
+                         "total_cost_usd": value}
+                result = runners._parse_response("claude", json.dumps(event))
+                self.assertEqual(result["cost_usd"], expected)
+                self.assertEqual(result["cost_source"], "claude_cli_estimate" if expected is not None else "unreported")
+
+    def test_codex_accepts_only_explicit_dollar_cost_without_repricing_tokens(self):
+        for field, expected in [("cost_usd", 0.04), ("total_cost_usd", 0.04), ("cost", None)]:
+            with self.subTest(field=field):
+                events = [{"type": "item.completed", "item": {"type": "agent_message", "text": "answer"}},
+                          {"type": "turn.completed", "usage": {"input_tokens": 50,
+                           "cached_input_tokens": 40, "output_tokens": 10,
+                           "output_tokens_details": {"reasoning_tokens": 8}, field: 0.04}}]
+                result = runners._parse_response("codex", "\n".join(map(json.dumps, events)))
+                self.assertEqual(result["tokens_total"], 60)
+                self.assertEqual(result["cost_usd"], expected)
+                self.assertEqual(result["cost_source"], "codex_cli_reported" if expected else "unreported")
+
+    def test_partial_token_usage_remains_unknown(self):
+        event = {"type": "result", "subtype": "success", "result": "answer",
+                 "usage": {"input_tokens": 100}}
+        result = runners._parse_response("claude", json.dumps(event))
+        self.assertIsNone(result["tokens_total"])
 
     def test_tools_invalidate_otherwise_successful_prediction(self):
         events = [{"type": "item.completed", "item": {"type": "command_execution", "command": "cat secret"}},
@@ -50,6 +121,8 @@ class ResponseTests(unittest.TestCase):
         result = runners._parse_response("codex", '{"type":"thread.started"}')
         self.assertEqual(result["status"], "error")
         self.assertIsNone(result["usage"])
+        self.assertIsNone(result["cost_usd"])
+        self.assertIsNone(result["tokens_total"])
 
     def test_error_does_not_publish_secret_stderr(self):
         summary = runners._error_summary("authentication failed token=sk-SECRET user@example.com /private/file", 1)
@@ -65,11 +138,13 @@ class ProcessTests(unittest.TestCase):
         self.assertEqual(result["status"], "unavailable")
         self.assertIsNone(result["usage"])
 
-    @patch.object(runners, "_execute", return_value=(0, '{"type":"result","subtype":"success","result":"answer"}', ""))
+    @patch.object(runners, "_execute", return_value=(0, '{"type":"result","subtype":"success","result":"answer","total_cost_usd":0.03,"usage":{"input_tokens":8,"output_tokens":2}}', ""))
     @patch.object(runners, "find_cli", return_value="/bin/claude")
     def test_run_passes_prompt_stdin_and_isolates_working_directory(self, _, execute):
         result = runners.run_model(runners.DEFAULT_MODELS[1], "only these clues", timeout=5)
         self.assertEqual(result["status"], "ok")
+        self.assertEqual(result["cost_usd"], 0.03)
+        self.assertEqual(result["tokens_total"], 10)
         argv, prompt, cwd, env, timeout = execute.call_args.args
         self.assertEqual(prompt, "only these clues")
         self.assertNotIn(prompt, argv)

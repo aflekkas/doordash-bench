@@ -1,0 +1,35 @@
+{
+  "id": "sol",
+  "model": "gpt-6.1-sol",
+  "cli": "codex",
+  "status": "ok",
+  "text": "{\"probabilities\":{\"M01\":0.13,\"M02\":0.23,\"M03\":0.1,\"M04\":0.2,\"M05\":0.27,\"M06\":0.07}}",
+  "latency_seconds": 5.077,
+  "usage": {
+    "input_tokens": 6254,
+    "cached_input_tokens": 2688,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 50,
+    "reasoning_output_tokens": 0
+  },
+  "model_usage": null,
+  "tokens_total": 6304,
+  "cost_usd": null,
+  "cost_source": "unreported",
+  "reported_model": null,
+  "error": null,
+  "task_id": "H1",
+  "score": 50.12,
+  "probabilities": {
+    "M01": 0.13,
+    "M02": 0.23,
+    "M03": 0.1,
+    "M04": 0.2,
+    "M05": 0.27,
+    "M06": 0.07
+  },
+  "top_choice": "M05",
+  "correct": false,
+  "estimated_cost_usd": 0.0079008,
+  "estimated_cost_source": "reference_price_estimate"
+}

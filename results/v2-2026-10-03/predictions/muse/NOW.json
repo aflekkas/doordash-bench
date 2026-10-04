@@ -1,0 +1,38 @@
+{
+  "id": "muse",
+  "model": "meta/muse-spark-1.3-contributor",
+  "cli": "opencode",
+  "status": "ok",
+  "text": "{\"probabilities\":{\"M01\":0.22,\"M02\":0.14,\"M03\":0.17,\"M04\":0.13,\"M05\":0.15,\"M06\":0.19}}",
+  "latency_seconds": 6.217,
+  "usage": {
+    "total": 1017,
+    "input": 698,
+    "output": 56,
+    "reasoning": 263,
+    "cache": {
+      "write": 0,
+      "read": 0
+    }
+  },
+  "model_usage": null,
+  "tokens_total": 1017,
+  "cost_usd": 0.0001336,
+  "cost_source": "opencode_cli_estimate",
+  "reported_model": null,
+  "error": null,
+  "task_id": "NOW",
+  "score": 58.38000000000001,
+  "probabilities": {
+    "M01": 0.22,
+    "M02": 0.14,
+    "M03": 0.17,
+    "M04": 0.13,
+    "M05": 0.15,
+    "M06": 0.19
+  },
+  "top_choice": "M01",
+  "correct": false,
+  "estimated_cost_usd": 0.0001336,
+  "estimated_cost_source": "opencode_cli_estimate"
+}

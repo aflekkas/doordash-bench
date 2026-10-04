@@ -1,0 +1,68 @@
+{
+  "id": "sonnet",
+  "model": "claude-sonnet-5-5",
+  "cli": "claude",
+  "status": "ok",
+  "text": "{\"probabilities\":{\"M01\":0.27,\"M02\":0.15,\"M03\":0.15,\"M04\":0.12,\"M05\":0.1,\"M06\":0.21}}",
+  "latency_seconds": 1.791,
+  "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 1492,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 59,
+    "output_tokens_details": {
+      "thinking_tokens": 0
+    },
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 1492,
+      "ephemeral_5m_input_tokens": 0
+    }
+  },
+  "model_usage": {
+    "claude-haiku-4-5-20251001": {
+      "inputTokens": 1529,
+      "outputTokens": 11,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0.001584,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000,
+      "thinkingTokens": 0
+    },
+    "claude-sonnet-5-5": {
+      "inputTokens": 2,
+      "outputTokens": 59,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 1492,
+      "webSearchRequests": 0,
+      "costUSD": 0.006562,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 128000,
+      "thinkingTokens": 0
+    }
+  },
+  "tokens_total": 1553,
+  "cost_usd": 0.008146,
+  "cost_source": "claude_cli_estimate",
+  "reported_model": "claude-haiku-4-5-20251001,claude-sonnet-5-5",
+  "error": null,
+  "task_id": "NOW",
+  "score": 55.67999999999999,
+  "probabilities": {
+    "M01": 0.27,
+    "M02": 0.15,
+    "M03": 0.15,
+    "M04": 0.12,
+    "M05": 0.1,
+    "M06": 0.21
+  },
+  "top_choice": "M01",
+  "correct": false,
+  "estimated_cost_usd": 0.008146,
+  "estimated_cost_source": "claude_cli_estimate"
+}
