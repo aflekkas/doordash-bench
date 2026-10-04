@@ -1,0 +1,36 @@
+{
+  "id": "muse",
+  "model": "meta/muse-spark-1.3-contributor",
+  "cli": "opencode",
+  "status": "ok",
+  "text": "{\"restaurant\":\"Bowls of Rice\",\"items\":[\"Crispy Garlic Sesame Fusion Chicken Rice Bowl\"],\"reason\":\"Newest and repeat order, twice ordered favorite\"}",
+  "latency_seconds": 7.021,
+  "usage": {
+    "total": 939,
+    "input": 676,
+    "output": 65,
+    "reasoning": 198,
+    "cache": {
+      "write": 0,
+      "read": 0
+    }
+  },
+  "reported_model": null,
+  "error": null,
+  "prediction": {
+    "restaurant": "Bowls of Rice",
+    "items": [
+      "Crispy Garlic Sesame Fusion Chicken Rice Bowl"
+    ],
+    "reason": "Newest and repeat order, twice ordered favorite"
+  },
+  "label": "Meta Muse Spark",
+  "score": 15,
+  "assessment": {
+    "id": "C7",
+    "category": "rice_bowl",
+    "item_match": "none",
+    "roast": "Twice ordered, once more wrong."
+  },
+  "exact_restaurant": false
+}

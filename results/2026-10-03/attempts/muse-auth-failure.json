@@ -1,0 +1,13 @@
+{
+  "id": "muse",
+  "model": "meta/muse-spark-1.3-contributor",
+  "cli": "opencode",
+  "status": "error",
+  "text": "",
+  "latency_seconds": 2.456,
+  "usage": null,
+  "reported_model": null,
+  "error": "CLI authentication failed; sign in using the installed CLI.",
+  "label": "Meta Muse Spark",
+  "score": null
+}

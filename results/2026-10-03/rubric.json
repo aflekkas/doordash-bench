@@ -1,0 +1,20 @@
+{
+  "name": "craving-closeness-v1",
+  "restaurant_only": {
+    "exact": 100,
+    "hot_chicken": 60,
+    "chicken": 40,
+    "rice_bowl": 20,
+    "other": 0
+  },
+  "with_item": {
+    "exact_restaurant": 70,
+    "exact_item": 30,
+    "partial_item": 15,
+    "wrong_restaurant_hot_chicken": 45,
+    "wrong_restaurant_chicken": 30,
+    "wrong_restaurant_rice_bowl": 15,
+    "wrong_restaurant_other": 0
+  },
+  "note": "One top-1 prediction per model. Closeness points, not accuracy percentages. No reward for rationale length."
+}

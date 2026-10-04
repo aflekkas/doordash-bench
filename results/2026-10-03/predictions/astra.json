@@ -1,0 +1,33 @@
+{
+  "id": "astra",
+  "model": "gpt-6-astra",
+  "cli": "codex",
+  "status": "ok",
+  "text": "{\"restaurant\":\"Bowls of Rice\",\"items\":[\"Crispy Garlic Sesame Fusion Chicken Rice Bowl\"],\"reason\":\"Your most recent order is also your only exact repeat meal, making it the strongest craving signal.\"}",
+  "latency_seconds": 5.743,
+  "usage": {
+    "input_tokens": 6131,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 47,
+    "reasoning_output_tokens": 0
+  },
+  "reported_model": null,
+  "error": null,
+  "label": "GPT Astra",
+  "prediction": {
+    "restaurant": "Bowls of Rice",
+    "items": [
+      "Crispy Garlic Sesame Fusion Chicken Rice Bowl"
+    ],
+    "reason": "Your most recent order is also your only exact repeat meal, making it the strongest craving signal."
+  },
+  "score": 15,
+  "assessment": {
+    "id": "C4",
+    "category": "rice_bowl",
+    "item_match": "none",
+    "roast": "Exact repeat logic, exactly wrong restaurant."
+  },
+  "exact_restaurant": false
+}

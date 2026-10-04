@@ -1,0 +1,33 @@
+{
+  "id": "sol",
+  "model": "gpt-6.1-sol",
+  "cli": "codex",
+  "status": "ok",
+  "text": "{\"restaurant\":\"Bowls of Rice\",\"items\":[\"Crispy Garlic Sesame Fusion Chicken Rice Bowl\"],\"reason\":\"Your newest order repeats the same bowl from an earlier order, making it the strongest craving signal.\"}",
+  "latency_seconds": 5.068,
+  "usage": {
+    "input_tokens": 6129,
+    "cached_input_tokens": 2688,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 47,
+    "reasoning_output_tokens": 0
+  },
+  "reported_model": null,
+  "error": null,
+  "label": "GPT Sol",
+  "prediction": {
+    "restaurant": "Bowls of Rice",
+    "items": [
+      "Crispy Garlic Sesame Fusion Chicken Rice Bowl"
+    ],
+    "reason": "Your newest order repeats the same bowl from an earlier order, making it the strongest craving signal."
+  },
+  "score": 15,
+  "assessment": {
+    "id": "C3",
+    "category": "rice_bowl",
+    "item_match": "none",
+    "roast": "Strongest signal, wrong frequency entirely."
+  },
+  "exact_restaurant": false
+}

@@ -1,0 +1,44 @@
+{
+  "id": "sonnet",
+  "model": "claude-sonnet-5-5",
+  "cli": "claude",
+  "status": "ok",
+  "text": "{\"restaurant\":\"Bowls of Rice\",\"items\":[\"Crispy Garlic Sesame Fusion Chicken Rice Bowl\",\"Crispy Vegetable Dumplings\"],\"reason\":\"Most recent order and repeated twice; the crispy garlic sesame chicken bowl is a clear favorite, with dumplings as a likely add-on.\"}",
+  "latency_seconds": 2.483,
+  "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 1087,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 121,
+    "output_tokens_details": {
+      "thinking_tokens": 0
+    },
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 1087,
+      "ephemeral_5m_input_tokens": 0
+    }
+  },
+  "reported_model": "claude-haiku-4-5-20251001,claude-sonnet-5-5",
+  "error": null,
+  "label": "Claude Sonnet 5.5",
+  "prediction": {
+    "restaurant": "Bowls of Rice",
+    "items": [
+      "Crispy Garlic Sesame Fusion Chicken Rice Bowl",
+      "Crispy Vegetable Dumplings"
+    ],
+    "reason": "Most recent order and repeated twice; the crispy garlic sesame chicken bowl is a clear favorite, with dumplings as a likely add-on."
+  },
+  "score": 15,
+  "assessment": {
+    "id": "C2",
+    "category": "rice_bowl",
+    "item_match": "none",
+    "roast": "Added dumplings, subtracted any chance at hot chicken."
+  },
+  "exact_restaurant": false
+}

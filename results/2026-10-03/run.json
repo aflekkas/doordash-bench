@@ -1,0 +1,382 @@
+{
+  "manifest": {
+    "started_at": "2026-10-03T23:54:47.373029+00:00",
+    "target_sha256": "f660af4723f93ae5749fdadc60d3fa356e226b7171b0f6c4cd08ff9e47e1b9dc",
+    "rubric_sha256": "b29fafaa2a660c5126b74316d4bf514a86c5f372b37772d61990cf3e1a7d155c",
+    "history_sha256": "8a6afd92f75bf080ba2a60fbcff904a3a634984c65ba9d8cd8b693e9a280128c",
+    "models": [
+      {
+        "id": "muse",
+        "label": "Meta Muse Spark",
+        "cli": "opencode",
+        "model": "meta/muse-spark-1.3-contributor"
+      },
+      {
+        "id": "opus",
+        "label": "Claude Opus 5.5",
+        "cli": "claude",
+        "model": "claude-opus-5-5"
+      },
+      {
+        "id": "sonnet",
+        "label": "Claude Sonnet 5.5",
+        "cli": "claude",
+        "model": "claude-sonnet-5-5"
+      },
+      {
+        "id": "sol",
+        "label": "GPT Sol",
+        "cli": "codex",
+        "model": "gpt-6.1-sol"
+      },
+      {
+        "id": "astra",
+        "label": "GPT Astra",
+        "cli": "codex",
+        "model": "gpt-6-astra"
+      }
+    ],
+    "setup_model": "sonnet",
+    "judge_model": "opus",
+    "trials_per_model": 1,
+    "transport": "installed CLIs; no direct API calls",
+    "timeout_seconds": 150,
+    "brief_sha256": "b1db1662e1db1a0391e7b00a1ba9497fe7adba59e626273e5eb40471482e6455",
+    "prompt_sha256": "fbacc01cbb05933fc21c9d125ce33a3738ff72aa3211000d39426efdbbde12dc",
+    "cli_versions": {
+      "codex": "codex-cli 0.160.0",
+      "claude": "2.1.289 (Claude Code)",
+      "opencode": "1.18.34",
+      "dd-cli": "0.2.5"
+    },
+    "cli_versions_recorded_after_run": true,
+    "infrastructure_retry": {
+      "model": "muse",
+      "cause": "OpenCode debug config redacted credential copied into isolation config; restored original config references",
+      "prompt_unchanged": true,
+      "prior_attempt": "attempts/muse-auth-failure.json"
+    },
+    "evaluation_batches": 2,
+    "published_category_precedence": "Rice/protein bowl first, even when it contains chicken. The original judge already classified every bowl this way; future harness prompts make the precedence explicit."
+  },
+  "target": {
+    "restaurant": "Dave's Hot Chicken",
+    "restaurant_aliases": [
+      "Dave’s Hot Chicken",
+      "Daves Hot Chicken"
+    ],
+    "items": [
+      "Dave's #2: 2 Sliders w/ Fries"
+    ]
+  },
+  "rubric": {
+    "name": "craving-closeness-v1",
+    "restaurant_only": {
+      "exact": 100,
+      "hot_chicken": 60,
+      "chicken": 40,
+      "rice_bowl": 20,
+      "other": 0
+    },
+    "with_item": {
+      "exact_restaurant": 70,
+      "exact_item": 30,
+      "partial_item": 15,
+      "wrong_restaurant_hot_chicken": 45,
+      "wrong_restaurant_chicken": 30,
+      "wrong_restaurant_rice_bowl": 15,
+      "wrong_restaurant_other": 0
+    },
+    "note": "One top-1 prediction per model. Closeness points, not accuracy percentages. No reward for rationale length."
+  },
+  "results": [
+    {
+      "id": "opus",
+      "model": "claude-opus-5-5",
+      "cli": "claude",
+      "status": "ok",
+      "text": "{\"restaurant\":\"Bowls of Rice\",\"items\":[\"Crispy Garlic Sesame Fusion Chicken Rice Bowl\"],\"reason\":\"Most recent and repeated order; this chicken bowl is a consistent favorite.\"}",
+      "latency_seconds": 3.496,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 1085,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 83,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 1085,
+          "ephemeral_5m_input_tokens": 0
+        }
+      },
+      "reported_model": "claude-haiku-4-5-20251001,claude-opus-5-5",
+      "error": null,
+      "label": "Claude Opus 5.5",
+      "prediction": {
+        "restaurant": "Bowls of Rice",
+        "items": [
+          "Crispy Garlic Sesame Fusion Chicken Rice Bowl"
+        ],
+        "reason": "Most recent and repeated order; this chicken bowl is a consistent favorite."
+      },
+      "score": 15,
+      "assessment": {
+        "id": "C5",
+        "category": "rice_bowl",
+        "item_match": "none",
+        "roast": "Consistent favorite, consistently missing the sliders."
+      },
+      "exact_restaurant": false
+    },
+    {
+      "id": "sonnet",
+      "model": "claude-sonnet-5-5",
+      "cli": "claude",
+      "status": "ok",
+      "text": "{\"restaurant\":\"Bowls of Rice\",\"items\":[\"Crispy Garlic Sesame Fusion Chicken Rice Bowl\",\"Crispy Vegetable Dumplings\"],\"reason\":\"Most recent order and repeated twice; the crispy garlic sesame chicken bowl is a clear favorite, with dumplings as a likely add-on.\"}",
+      "latency_seconds": 2.483,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 1087,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 121,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 1087,
+          "ephemeral_5m_input_tokens": 0
+        }
+      },
+      "reported_model": "claude-haiku-4-5-20251001,claude-sonnet-5-5",
+      "error": null,
+      "label": "Claude Sonnet 5.5",
+      "prediction": {
+        "restaurant": "Bowls of Rice",
+        "items": [
+          "Crispy Garlic Sesame Fusion Chicken Rice Bowl",
+          "Crispy Vegetable Dumplings"
+        ],
+        "reason": "Most recent order and repeated twice; the crispy garlic sesame chicken bowl is a clear favorite, with dumplings as a likely add-on."
+      },
+      "score": 15,
+      "assessment": {
+        "id": "C2",
+        "category": "rice_bowl",
+        "item_match": "none",
+        "roast": "Added dumplings, subtracted any chance at hot chicken."
+      },
+      "exact_restaurant": false
+    },
+    {
+      "id": "astra",
+      "model": "gpt-6-astra",
+      "cli": "codex",
+      "status": "ok",
+      "text": "{\"restaurant\":\"Bowls of Rice\",\"items\":[\"Crispy Garlic Sesame Fusion Chicken Rice Bowl\"],\"reason\":\"Your most recent order is also your only exact repeat meal, making it the strongest craving signal.\"}",
+      "latency_seconds": 5.743,
+      "usage": {
+        "input_tokens": 6131,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 47,
+        "reasoning_output_tokens": 0
+      },
+      "reported_model": null,
+      "error": null,
+      "label": "GPT Astra",
+      "prediction": {
+        "restaurant": "Bowls of Rice",
+        "items": [
+          "Crispy Garlic Sesame Fusion Chicken Rice Bowl"
+        ],
+        "reason": "Your most recent order is also your only exact repeat meal, making it the strongest craving signal."
+      },
+      "score": 15,
+      "assessment": {
+        "id": "C4",
+        "category": "rice_bowl",
+        "item_match": "none",
+        "roast": "Exact repeat logic, exactly wrong restaurant."
+      },
+      "exact_restaurant": false
+    },
+    {
+      "id": "sol",
+      "model": "gpt-6.1-sol",
+      "cli": "codex",
+      "status": "ok",
+      "text": "{\"restaurant\":\"Bowls of Rice\",\"items\":[\"Crispy Garlic Sesame Fusion Chicken Rice Bowl\"],\"reason\":\"Your newest order repeats the same bowl from an earlier order, making it the strongest craving signal.\"}",
+      "latency_seconds": 5.068,
+      "usage": {
+        "input_tokens": 6129,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 47,
+        "reasoning_output_tokens": 0
+      },
+      "reported_model": null,
+      "error": null,
+      "label": "GPT Sol",
+      "prediction": {
+        "restaurant": "Bowls of Rice",
+        "items": [
+          "Crispy Garlic Sesame Fusion Chicken Rice Bowl"
+        ],
+        "reason": "Your newest order repeats the same bowl from an earlier order, making it the strongest craving signal."
+      },
+      "score": 15,
+      "assessment": {
+        "id": "C3",
+        "category": "rice_bowl",
+        "item_match": "none",
+        "roast": "Strongest signal, wrong frequency entirely."
+      },
+      "exact_restaurant": false
+    },
+    {
+      "id": "muse",
+      "model": "meta/muse-spark-1.3-contributor",
+      "cli": "opencode",
+      "status": "ok",
+      "text": "{\"restaurant\":\"Bowls of Rice\",\"items\":[\"Crispy Garlic Sesame Fusion Chicken Rice Bowl\"],\"reason\":\"Newest and repeat order, twice ordered favorite\"}",
+      "latency_seconds": 7.021,
+      "usage": {
+        "total": 939,
+        "input": 676,
+        "output": 65,
+        "reasoning": 198,
+        "cache": {
+          "write": 0,
+          "read": 0
+        }
+      },
+      "reported_model": null,
+      "error": null,
+      "prediction": {
+        "restaurant": "Bowls of Rice",
+        "items": [
+          "Crispy Garlic Sesame Fusion Chicken Rice Bowl"
+        ],
+        "reason": "Newest and repeat order, twice ordered favorite"
+      },
+      "label": "Meta Muse Spark",
+      "score": 15,
+      "assessment": {
+        "id": "C7",
+        "category": "rice_bowl",
+        "item_match": "none",
+        "roast": "Twice ordered, once more wrong."
+      },
+      "exact_restaurant": false
+    }
+  ],
+  "baselines": [
+    {
+      "id": "baseline_0",
+      "label": "Most recent order",
+      "baseline": true,
+      "status": "ok",
+      "score": 15,
+      "prediction": {
+        "restaurant": "Bowls of Rice",
+        "items": [
+          "Crispy Garlic Sesame Fusion Chicken Rice Bowl"
+        ],
+        "reason": "Count orders; tie-break by recency."
+      },
+      "assessment": {
+        "id": "C1",
+        "category": "rice_bowl",
+        "item_match": "none",
+        "roast": "Garlic sesame bowl, while Dave's sliders burn unclaimed."
+      },
+      "exact_restaurant": false
+    },
+    {
+      "id": "baseline_1",
+      "label": "Order-frequency baseline",
+      "baseline": true,
+      "status": "ok",
+      "score": 15,
+      "prediction": {
+        "restaurant": "Bowls of Rice",
+        "items": [
+          "Crispy Garlic Sesame Fusion Chicken Rice Bowl"
+        ],
+        "reason": "Count orders; tie-break by recency."
+      },
+      "assessment": {
+        "id": "C6",
+        "category": "rice_bowl",
+        "item_match": "none",
+        "roast": "Counted orders, forgot to count the heat."
+      },
+      "exact_restaurant": false
+    }
+  ],
+  "setup": {
+    "id": "sonnet",
+    "model": "claude-sonnet-5-5",
+    "cli": "claude",
+    "status": "ok",
+    "text": "{\"pattern_summary\":\"Six orders appear, newest first. Bowls of Rice shows up twice (sequence 1 and 5), both including the Crispy Garlic Sesame Fusion Chicken Rice Bowl. Dave's Hot Chicken also appears twice (sequences 3 and 6), with sliders and fries in one order and a hot mozz piece plus single tender in the other. Other single orders: Taco Bell (steak quesadilla, grilled cheese burrito) and Panera Bread (Greek salad, tuna salad sandwich).\",\"rubric_note\":\"Fixed craving-closeness-v1: one top-1 prediction earns closeness points; exact restaurant and item score highest, related chicken or rice bowl matches earn partial credit, and rationale length earns nothing.\"}",
+    "latency_seconds": 3.985,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 1292,
+      "cache_read_input_tokens": 0,
+      "output_tokens": 268,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 1292,
+        "ephemeral_5m_input_tokens": 0
+      }
+    },
+    "reported_model": "claude-haiku-4-5-20251001,claude-sonnet-5-5",
+    "error": null
+  },
+  "evaluator": {
+    "id": "opus",
+    "model": "claude-opus-5-5",
+    "cli": "claude",
+    "status": "ok",
+    "text": "{\"assessments\":[{\"id\":\"C1\",\"category\":\"rice_bowl\",\"item_match\":\"none\",\"roast\":\"Garlic sesame bowl, while Dave's sliders burn unclaimed.\"},{\"id\":\"C2\",\"category\":\"rice_bowl\",\"item_match\":\"none\",\"roast\":\"Added dumplings, subtracted any chance at hot chicken.\"},{\"id\":\"C3\",\"category\":\"rice_bowl\",\"item_match\":\"none\",\"roast\":\"Strongest signal, wrong frequency entirely.\"},{\"id\":\"C4\",\"category\":\"rice_bowl\",\"item_match\":\"none\",\"roast\":\"Exact repeat logic, exactly wrong restaurant.\"},{\"id\":\"C5\",\"category\":\"rice_bowl\",\"item_match\":\"none\",\"roast\":\"Consistent favorite, consistently missing the sliders.\"},{\"id\":\"C6\",\"category\":\"rice_bowl\",\"item_match\":\"none\",\"roast\":\"Counted orders, forgot to count the heat.\"},{\"id\":\"C7\",\"category\":\"rice_bowl\",\"item_match\":\"none\",\"roast\":\"Twice ordered, once more wrong.\"}]}",
+    "latency_seconds": 5.819,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 1791,
+      "cache_read_input_tokens": 0,
+      "output_tokens": 352,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 1791,
+        "ephemeral_5m_input_tokens": 0
+      }
+    },
+    "reported_model": "claude-haiku-4-5-20251001,claude-opus-5-5",
+    "error": null
+  },
+  "caption": "I built DoorDash Bench to find out which frontier model knows what I want for dinner. All five tied with counting orders. They told me to eat rice. I wanted Dave's. AGI is cancelled."
+}

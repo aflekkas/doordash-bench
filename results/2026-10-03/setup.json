@@ -1,0 +1,27 @@
+{
+  "id": "sonnet",
+  "model": "claude-sonnet-5-5",
+  "cli": "claude",
+  "status": "ok",
+  "text": "{\"pattern_summary\":\"Six orders appear, newest first. Bowls of Rice shows up twice (sequence 1 and 5), both including the Crispy Garlic Sesame Fusion Chicken Rice Bowl. Dave's Hot Chicken also appears twice (sequences 3 and 6), with sliders and fries in one order and a hot mozz piece plus single tender in the other. Other single orders: Taco Bell (steak quesadilla, grilled cheese burrito) and Panera Bread (Greek salad, tuna salad sandwich).\",\"rubric_note\":\"Fixed craving-closeness-v1: one top-1 prediction earns closeness points; exact restaurant and item score highest, related chicken or rice bowl matches earn partial credit, and rationale length earns nothing.\"}",
+  "latency_seconds": 3.985,
+  "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 1292,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 268,
+    "output_tokens_details": {
+      "thinking_tokens": 0
+    },
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 1292,
+      "ephemeral_5m_input_tokens": 0
+    }
+  },
+  "reported_model": "claude-haiku-4-5-20251001,claude-sonnet-5-5",
+  "error": null
+}
